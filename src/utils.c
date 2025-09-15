@@ -17,3 +17,8 @@ int get_api_link(http_t *h){
 
     return 0;
 }
+
+void clear_buffer ()
+{
+    while ( getchar() != '\n' );
+}
