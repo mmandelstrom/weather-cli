@@ -1,8 +1,9 @@
 #include "../includes/http.h"
+#include <stdio.h>
 
 int get_api_link(http_t *h){
     char city[21];
-    if (scanf("%21s", city)!=1){
+    if (scanf("%20s", city)!=1){
         printf("failed to fetch city\n");
 
 
