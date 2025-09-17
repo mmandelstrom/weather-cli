@@ -56,7 +56,7 @@ int get_api_link(http_t *h){
     
     while (*scan != '\0') {
 
-        sscanf(scan, "%[^:]:%lf:%lf\n", buffer, &lon, &lat); /*vrf fel håll?*/
+        sscanf(scan, "%[^:]:%lf:%lf\n", buffer, &lat, &lon); /*nvm.........*/
         
         if (strcmp(buffer, input) == 0) {
             found = 1;
@@ -73,7 +73,7 @@ int get_api_link(http_t *h){
     
 
     if (found == 1) {
-        sprintf(h->url ,"https://api.open-meteo.com/v1/forecast?latitude=%lf&longitude=%lf&current_weather=true", lon, lat);
+        sprintf(h->url ,"https://api.open-meteo.com/v1/forecast?latitude=%lf&longitude=%lf&current_weather=true", lat, lon);
     } else {
         printf("Invalid city, ");
         return -1;
