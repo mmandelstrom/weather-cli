@@ -10,10 +10,8 @@ int main(){
     http_t h;
     curl_global_init(CURL_GLOBAL_ALL);
      while(1){
-        printf("\ninput city: ");
     if (get_api_link(&h)!=0){
         printf("failed to fetch link\n");
-
         return -1;
     }
 
