@@ -187,7 +187,7 @@ city* cities_search_by_name(cities* _Cities) {
 
 
   while(current != NULL) {
-    if (current->name && strcasecmp(current->name, user_input_city) == 0) {
+    if (current->name && strcmp(current->name, user_input_city) == 0) {
       printf("City %s found\n", current->name);
       return current;
     }
