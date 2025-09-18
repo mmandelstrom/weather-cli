@@ -56,7 +56,7 @@ int get_api_link(http_t *h){
     
     while (*scan != '\0') {
 
-        sscanf(scan, "%[^:]:%lf:%lf\n", buffer, &lat, &lon); /*nvm.........*/
+        sscanf(scan, "%[^:]:%lf:%lf\n", buffer, &lat, &lon);
         
         if (strcmp(buffer, input) == 0) {
             found = 1;
