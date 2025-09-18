@@ -6,9 +6,9 @@
 
 int meteo_get_new_city(char *_Name);
 
-int meteo_get_city_data(city *_City) {
+int meteo_get_city_data(City *_City) {
   char url[150];
-  http_t h;
+  HTTP h;
   sprintf(url,
           "https://api.open-meteo.com/v1/"
           "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
@@ -36,7 +36,7 @@ int meteo_get_city_data(city *_City) {
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   size_t bytes = size * nmemb;
   printf("Chunk recieved: %zu bytes\n", bytes);
-  http_t *h = (http_t *)userp;
+  HTTP *h = (HTTP *)userp;
   h->size = bytes + 1;
   h->data = malloc(h->size);
   memcpy(h->data, buffer, bytes);
@@ -44,10 +44,10 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   return bytes;
 }
 
-void http_clear_data_buffer(http_t *h) {
+void http_clear_data_buffer(HTTP *h) {
   if (h->data) {
     memset(h->data, 0, h->size);
   }
 }
 
-void http_free_memory(http_t *h) { free(h->data); }
+void http_free_memory(HTTP *h) { free(h->data); }

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "../includes/cities.h"
 
-cities city_list;
+Cities cities_g;
 int main(){
-  cities_init(&city_list);
+  cities_init(&cities_g);
 
 
 /*  char user_input;
