@@ -2,10 +2,21 @@
 #include "../includes/http.h"
 #include <curl/curl.h>
 #include <string.h>
+#include "../includes/cities.h"
 
-int get_city_data (http_t *h){
+
+int meteo_get_new_city(char* _Name);
+
+int meteo_get_city_data(city* _City){
+  char url[150];
+  http_t h;
+  sprintf(url,
+          "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
+          _City->latitude, _City->longitude);
+
+
   CURL* handle = curl_easy_init();
-  curl_easy_setopt(handle, CURLOPT_URL, h->url);
+  curl_easy_setopt(handle, CURLOPT_URL, url);
   curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_data);
   curl_easy_setopt(handle, CURLOPT_WRITEDATA, &h);  
   CURLcode result = curl_easy_perform(handle);
@@ -25,8 +36,8 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   size_t bytes = size * nmemb;
   printf("Chunk recieved: %zu bytes\n", bytes);
   http_t *h = (http_t*)userp;
-
-  h->data = malloc(bytes + 1);
+  h->size = bytes + 1;
+  h->data = malloc(h->size);
   memcpy(h->data, buffer, bytes);
 
   printf("This is the data: %s\n", h->data);
@@ -34,5 +45,12 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   return bytes;
 }
 
+void http_clear_data_buffer(http_t *h) {
+  if (h->data) {
+    memset(h->data, 0, h->size);
+    }
+  }
 
-
+void http_free_memory(http_t *h) {
+  free(h->data);
+}
