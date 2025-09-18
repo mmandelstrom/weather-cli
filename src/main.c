@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include <curl/curl.h>
-#include "../includes/http.h"
-#include "../includes/utils.h"
+#include "../includes/cities.h"
 
-
+cities city_list;
 int main(){
-  char user_input;
+  cities_init(&city_list);
+
+
+/*  char user_input;
   http_t h;
   curl_global_init(CURL_GLOBAL_ALL);
     
@@ -38,6 +39,6 @@ int main(){
     }
 
     curl_global_cleanup();
-
+*/
     return 0;
 }
