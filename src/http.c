@@ -1,30 +1,53 @@
-#include <stdio.h>
 #include "../includes/http.h"
+#include "../includes/cities.h"
 #include <curl/curl.h>
+#include <stdio.h>
+#include <string.h>
 
+int meteo_get_new_city(char *_Name);
 
-int get_city_data (http_t *h){
-    CURL* handle = curl_easy_init();
-    curl_easy_setopt(handle, CURLOPT_URL, h->url);
-    curl_easy_setopt(handle, CURLOPT_FAILONERROR,1L);
-    CURLcode result = curl_easy_perform(handle);
-    if(result == CURLE_HTTP_RETURNED_ERROR){
-        printf("failed to fetch from API\n");
+int meteo_get_city_data(City *_City) {
+  char url[150];
+  HTTP h;
+  sprintf(url,
+          "https://api.open-meteo.com/v1/"
+          "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
+          _City->latitude, _City->longitude);
 
-        curl_easy_cleanup(handle);
-        
-        return -1;
-    }
+  CURL *handle = curl_easy_init();
+  curl_easy_setopt(handle, CURLOPT_URL, url);
+  curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_data);
+  curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&h);
+  CURLcode result = curl_easy_perform(handle);
+
+  if (result != CURLE_OK) {
+    printf("Failed to fetch data from meteo API\n");
     curl_easy_cleanup(handle);
+    return -1;
+  }
 
-    return 0;
+  printf("DAta: %s\n", h.data);
 
+  curl_easy_cleanup(handle);
 
-
-
-
-
-
+  return 0;
 }
 
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
+  size_t bytes = size * nmemb;
+  printf("Chunk recieved: %zu bytes\n", bytes);
+  HTTP *h = (HTTP *)userp;
+  h->size = bytes + 1;
+  h->data = malloc(h->size);
+  memcpy(h->data, buffer, bytes);
 
+  return bytes;
+}
+
+void http_clear_data_buffer(HTTP *h) {
+  if (h->data) {
+    memset(h->data, 0, h->size);
+  }
+}
+
+void http_free_memory(HTTP *h) { free(h->data); }

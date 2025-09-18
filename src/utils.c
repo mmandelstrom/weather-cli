@@ -1,8 +1,9 @@
 #include "../includes/http.h"
 #include <stdio.h>
+#include "../includes/utils.h"
 #include <string.h>
+#include <strings.h>
 
-int get_api_link(http_t *h){
 
     const char* cities = 
     "Stockholm:59.3293:18.0686\n" 
@@ -47,46 +48,32 @@ int get_api_link(http_t *h){
 
     printf("Input city: \n");
 
-    if (scanf("%20s", input)!=1){
-        printf("failed to fetch city\n");
-        return -1;
-    }
 
-    scan = cities;
-    
-    while (*scan != '\0') {
+/*
+int get_meteo_url(http_t *h){
+  char city[21];
+  int i;
 
-        sscanf(scan, "%[^:]:%lf:%lf\n", buffer, &lon, &lat); /*vrf fel håll?*/
-        
-        if (strcmp(buffer, input) == 0) {
-            found = 1;
-            break;
-        }
-
-        scan = strchr(scan, '\n');
-        if (scan == NULL) {
-            break;
-        } else {
-            scan++;
-        }
-    }
-    
-
-    if (found == 1) {
-        sprintf(h->url ,"https://api.open-meteo.com/v1/forecast?latitude=%lf&longitude=%lf&current_weather=true", lon, lat);
-    } else {
-        printf("Invalid city, ");
-        return -1;
-    }
-    
+  if (fgets(city, sizeof(city), stdin) == NULL) {
+    printf("Failed to get user input\n");
+    return -1;
 
 
+  }
 
+  city[strcspn(city, "\n")] = '\0';
 
-    return 0;
+  int found = -1;
+
+   sprintf(h->url,
+          "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
+          cities[i].lat, cities[i].lon);
+
+  return 0;
 }
 
-void clear_buffer ()
-{
+void clear_buffer (){
     while ( getchar() != '\n' );
 }
+
+*/
