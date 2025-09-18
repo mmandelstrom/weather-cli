@@ -25,38 +25,39 @@ const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Luleå:65.5848:22.1567\n"
   "Kiruna:67.8558:20.2253\n";
 
-int cities_parse_list(cities* _Cities, const char* list);
+int cities_parse_list(Cities* _Cities, const char* list);
 
 //--------------------------------------------------------
 
 
 
-int cities_init(cities* _Cities) {
+int cities_init(Cities* _Cities) {
   //TODO Börja med att rensa citites.
+
+  memset(_Cities, 0, sizeof(*_Cities));
 
   if (cities_parse_list(_Cities, cities_list) != 0) {
     return -1;
   }
   cities_print(_Cities);
   
-  city* user_city;
-  user_city = cities_search_by_name(_Cities);
+  City* user_city;
+   
+  if (cities_get(_Cities, "Stockholm", &user_city) != 0) {
+    printf("Failure");
+  }
+  
+  meteo_get_city_data(user_city);
 
-  if (user_city == NULL) {
-    printf("FAilure\n");
-  }
-  else {
-    meteo_get_city_data(user_city);
-  }
 
   return 0;
 }
 
-void cities_print(cities* _Cities) {
+void cities_print(Cities* _Cities) {
   if (_Cities->head == NULL) {
     printf("List is empty, no cities to print\n");
   } else {
-    city* current = _Cities->head;
+    City* current = _Cities->head;
 
     do {
       printf("- %s\n", current->name);
@@ -65,7 +66,7 @@ void cities_print(cities* _Cities) {
   }
 }
 
-int cities_parse_list(cities* _Cities, const char* list) {
+int cities_parse_list(Cities* _Cities, const char* list) {
   char* list_copy = my_strdup(list);
   if (list_copy == NULL) {
     printf("Failed to allocate memory for list\n");
@@ -114,8 +115,8 @@ int cities_parse_list(cities* _Cities, const char* list) {
     return 0;
 }
 
-int cities_add(cities* _Cities, char* _Name, float _Latitude, float _Longitude, city** _City) {
-  city* new_city = (city*)malloc(sizeof(city));
+int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, City** _City) {
+  City* new_city = (City*)malloc(sizeof(City));
   if (new_city == NULL) {
     printf("Unable to allocate memory for City: %s\n", _Name);
     return -1;
@@ -142,60 +143,44 @@ int cities_add(cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
 }
 
 
-void cities_remove(cities* _Cities, city* _City) {
-  if (!_Cities || !_City) {
-    return;
-  }
+void cities_remove(Cities* _Cities, City* _City) {
   
-  if (_City->prev) {
-    _City->prev->next = _City->next;
-  } 
-  else {
-    _Cities->head = _City->next;
-    if (_Cities->head) {
-      _Cities->head->prev = NULL;
+  /*------------------DEBUG-------------------
+	printf("_Cities->head: %s\n", _Cities->head->name);
+	printf("_City->name: %s\n", _City->name);
+	------------------------------------------*/
+	if (_City->next == NULL && _City->prev == NULL) {
+		_Cities->tail = NULL;
+        _Cities->head = NULL;
+    } else if (_City == _Cities->tail) {
+		_Cities->tail = _City->prev;
+        _City->prev->next = NULL;
+    } else if (_City == _Cities->head){
+		_Cities->head = _City->next;
+        _City->next->prev = NULL;
+    } else {
+        _City->next->prev = _City->prev;
+        _City->prev->next = _City->next;
     }
-  }
+    
+	free(_City);
 
-  if (_City->next) {
-    _City->next->prev = _City->prev;
-  }
-  else {
-    _Cities->tail = _City->prev;
-    if (_Cities->tail) {
-      _Cities->tail->next = NULL;
-    }
-  }
-
-  printf("Removed city: %s\n", _City->name);
-  free(_City);
-
+  return;
 }
 
-city* cities_search_by_name(cities* _Cities) {
-  if (!_Cities) {
-    return NULL;
-  }
-  char user_input_city[20];
-
-  printf("Please enter a city you would like a weather report for: ");
-  fgets(user_input_city, sizeof(user_input_city), stdin);
-  user_input_city[strcspn(user_input_city, "\n")] = '\0';
-
-  city* current = _Cities->head;
- 
-
+int cities_get(Cities* _Cities, char* _Name, City** _CityPtr) {
+  City* current = _Cities->head;
 
   while(current != NULL) {
-    if (current->name && strcmp(current->name, user_input_city) == 0) {
+    if (current->name && strcmp(current->name, _Name) == 0) {
       printf("City %s found\n", current->name);
-      return current;
+      if (_CityPtr != NULL) {
+        *_CityPtr = current;
+        return 0;
+      }
     }
     current = current->next;
   }
-   return NULL;
+   return -1;
 }
-void cities_dispose(cities* c);
-
-
-
+void cities_dispose(Cities* c);
