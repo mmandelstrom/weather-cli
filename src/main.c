@@ -3,6 +3,7 @@
 
 Cities cities_g;
 int main(){
+  
   cities_init(&cities_g);
 
 
