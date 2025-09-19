@@ -1,7 +1,7 @@
 #ifndef __UTILS_H_
 #define __UTILS_H_
-#include "../includes/http.h"
 #include <string.h>
+#include <stdlib.h>
 
 static inline char* my_strdup(const char* str) {
   if (!str) return NULL;
@@ -14,6 +14,10 @@ static inline char* my_strdup(const char* str) {
   
   return copy;
 }
+
+void print_welcome_message();
+int get_user_input(char** _InputPtr);
+int break_loop();
 
 #endif
 

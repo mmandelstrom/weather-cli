@@ -7,8 +7,9 @@
 int meteo_get_new_city(char *_Name);
 
 int meteo_get_city_data(City *_City) {
-  char url[150];
-  HTTP h;
+  char* url = (char*)malloc(150);
+  HTTP h = {0};
+
   sprintf(url,
           "https://api.open-meteo.com/v1/"
           "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
@@ -29,7 +30,9 @@ int meteo_get_city_data(City *_City) {
   printf("DAta: %s\n", h.data);
 
   curl_easy_cleanup(handle);
-
+  
+  free(url);
+  free(h.data);
   return 0;
 }
 
@@ -37,9 +40,16 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   size_t bytes = size * nmemb;
   printf("Chunk recieved: %zu bytes\n", bytes);
   HTTP *h = (HTTP *)userp;
-  h->size = bytes + 1;
-  h->data = malloc(h->size);
+  
+  char *newptr = realloc(h->data, h->size + bytes + 1);
+  if (newptr == NULL) {
+    printf("Unable to reallocate memory\n");
+    return -1;
+  }
+  h->data = newptr;
+  h->size += bytes;
   memcpy(h->data, buffer, bytes);
+  h->data[h->size] = '\0';
 
   return bytes;
 }

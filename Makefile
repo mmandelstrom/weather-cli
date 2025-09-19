@@ -14,6 +14,11 @@ BUILD_DIR := build
 # Detta är en enkel variabel definition
 CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes
 
+PROFILE ?= default
+
+ifeq ($(PROFILE),debug)
+  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -O0 -g
+endif
 # Länkarflaggor
 # Detta är en enkel variabel definition
 LDFLAGS := -flto -Wl,--gc-sections

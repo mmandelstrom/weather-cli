@@ -1,11 +1,12 @@
-#include <stdio.h>
 #include "../includes/cities.h"
+#include "../includes/utils.h"
 
 Cities cities_g;
-int main(){
-  
-  cities_init(&cities_g);
 
+int main(){
+
+  print_welcome_message();
+  cities_init(&cities_g);
 
 /*  char user_input;
   http_t h;
