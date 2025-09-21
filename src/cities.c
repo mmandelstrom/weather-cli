@@ -64,7 +64,6 @@ int cities_init(Cities* _Cities) {
 
     meteo_get_city_data(user_city);
 
-
     if (break_loop() != 0) {
       break;
     }

@@ -1,5 +1,6 @@
 #include "../includes/http.h"
 #include "../includes/cities.h"
+#include "../includes/parse.h"
 #include <curl/curl.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,10 +28,13 @@ int meteo_get_city_data(City *_City) {
     return -1;
   }
 
-  printf("DAta: %s\n", h.data);
 
   curl_easy_cleanup(handle);
-  
+ 
+  if (parse_json_data(&h) != 0) {
+    printf("Error in parse\n");
+  } 
+
   free(url);
   free(h.data);
   return 0;
