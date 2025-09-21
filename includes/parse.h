@@ -1,7 +1,7 @@
 #ifndef __PARSE_H__
 #define __PARSE_H__
 #include "../includes/http.h"
-#include "../includes/cJSON.h"
+#include "../external/cjson/cJSON.h"
 
 typedef struct {
   cJSON name;

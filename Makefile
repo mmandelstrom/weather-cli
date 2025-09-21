@@ -12,7 +12,7 @@ BUILD_DIR := build
 
 # Flaggor: standard, varningar, optimering + auto-dep för headers 
 # Detta är en enkel variabel definition
-CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes
+CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Iexternal/cjson
 
 PROFILE ?= default
 
@@ -25,16 +25,19 @@ LDFLAGS := -flto -Wl,--gc-sections
 
 # Bibliotek att länka mot
 # Detta är en enkel variabel definition
-LIBS := -lcurl -ljansson
+LIBS := -lcurl 
 
 # Hittar alla .c filer rekursivt i katalogen.
 #Den anropar 'find' kommandot i Linux och formaterar resultatet som en lista på sökvägar med mellanslag mellan varje
 SRC := $(shell find -L $(SRC_DIR) -type f -name '*.c')
+SRC += external/cjson/cJSON.c
+SRC := $(strip $(SRC))
 
 # Mappa varje .c till motsvarande .o i BUILD_DIR
 # Häre anropar den inbyggda 'patsubst' funktionen i Make för att ersätta prefix och suffix
 # Alltså, den tar varje filväg i SRC som matchar mönstret $(SRC_DIR)/%.c och ersätter det med $(BUILD_DIR)/%.o
-OBJ := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC))
+
+OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
 
 # Tillhörande .d-filer (dependency-filer skapade av -MMD)
 # Här härleder vi .d-filerna direkt från OBJ genom att bara byta filändelsen från .o till .d
@@ -72,7 +75,7 @@ $(BIN): $(OBJ)
 #   $(BUILD_DIR)/subfolder/test.o: $(SRC_DIR)/subfolder/test.c
 #   $(BUILD_DIR)/main.o: $(SRC_DIR)/main.c
 # 	osv...
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: %.c
 	@echo "Compiling $<..."
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@

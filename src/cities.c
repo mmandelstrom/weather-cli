@@ -38,11 +38,13 @@ int cities_init(Cities* _Cities) {
   if (cities_parse_list(_Cities, cities_list) != 0) {
     return -1;
   }
-  cities_print(_Cities);
+  
   
   char* user_input = NULL;
 
   while (1) {
+    cities_print(_Cities);
+
     if (get_user_input(&user_input) != 0) {
       free(user_input);
       printf("Please try again\n");

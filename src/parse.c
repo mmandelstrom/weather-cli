@@ -1,6 +1,6 @@
 #include "../includes/parse.h"
 #include "../includes/http.h"
-#include "../includes/cJSON.h"
+#include "../external/cjson/cJSON.h"
 #include <stdio.h>
 
 int parse_json_data(HTTP* h) {
