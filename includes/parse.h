@@ -9,7 +9,7 @@ typedef struct {
   cJSON lat;
   cJSON lon;
 } Meteo_data;
-int parse_json_data(HTTP* h);
+int parse_json_data_old(HTTP* h);
 int parse_add_to_file(cJSON* root);
 int parse_read_and_print(const char* _Filepath);
 void check_time_test();

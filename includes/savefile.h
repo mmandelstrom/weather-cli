@@ -14,6 +14,6 @@ typedef struct {
 
 } WeatherData;
 
-int get_weather_data(HTTP* _Http, char* _City_name);
+int get_weather_data(HTTP* _Http);
 
 #endif

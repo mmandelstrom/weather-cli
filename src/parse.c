@@ -12,7 +12,7 @@ void check_time_test() {
          utc->tm_sec, utc->tm_min, utc->tm_hour, utc->tm_mday, utc->tm_mon, utc->tm_year + 1900);
 }
 
-int parse_json_data(HTTP* h) {
+int parse_json_data_old(HTTP* h) {
   cJSON* root = cJSON_Parse(h->data);
   if (root == NULL) {
     const char *error_ptr = cJSON_GetErrorPtr();

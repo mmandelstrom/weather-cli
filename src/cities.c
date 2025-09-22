@@ -5,6 +5,9 @@
 #include "../includes/utils.h"
 #include "../includes/cities.h"
 #include "../includes/http.h"
+#include "../includes/parsedata.h"
+#include "../includes/savefile.h"
+
 
 /*-------------Internal function definitions----------------*/
 
