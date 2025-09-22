@@ -1,10 +1,8 @@
 #include "../includes/http.h"
 #include "../includes/cities.h"
-#include "../includes/parse.h"
 #include <curl/curl.h>
 #include <stdio.h>
 #include <string.h>
-#include "../includes/parsedata.h"
 #include "../includes/savefile.h"
 
 
@@ -33,13 +31,11 @@ int meteo_get_city_data(City *_City) {
 
 
   curl_easy_cleanup(handle);
- 
-  if (parse_json_data_old(&h) != 0) {
-    printf("Error in parse\n");
-  } 
+
   if (get_weather_data(&h) != 0) {
-    printf("Error in savefile\n");
-  }
+    printf("Failed to get weather data\n");
+    return -1;
+  } 
 
   free(url);
   free(h.data);
@@ -51,15 +47,15 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   printf("Chunk recieved: %zu bytes\n", bytes);
   HTTP *h = (HTTP *)userp;
   
-  char *newptr = realloc(h->data, h->size + bytes + 1);
+  char *newptr = realloc(h->data, h->size + bytes + 2);
   if (newptr == NULL) {
     printf("Unable to reallocate memory\n");
     return -1;
   }
   h->data = newptr;
-  h->size += bytes;
+  h->size += sizeof(*newptr);
   memcpy(h->data, buffer, bytes);
-  h->data[h->size] = '\0';
+
 
   return bytes;
 }

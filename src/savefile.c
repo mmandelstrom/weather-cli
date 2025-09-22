@@ -2,36 +2,38 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../includes/parsedata.h"
-#include "http.h"
-#include "savefile.h"
+#include "../includes/http.h"
+#include "../includes/savefile.h"
+#include "libs/cJSON/cJSON.h"
+
 
 FILE* fptr_g;
 
 int get_weather_data(HTTP* _Http) {
-    WeatherData* wd;
-    memset(wd, 0, sizeof(WeatherData));
 
-    if (parse_json_data(_Http, &wd) != 0) {
-        printf("Failed to parse JSON data\n");
-        return -1;
-    }
+  fptr_g = fopen("data.txt", "r+");
+  if (!fptr_g) {
+    fptr_g = fopen("data.txt", "w");
+    fprintf(fptr_g, "[%s]", _Http->data);
+  } else {
+    fseek(fptr_g, -1, SEEK_END);
+    fprintf(fptr_g, ",%s]", _Http->data);
+  }
 
-    fptr_g = fopen("data.bin", "ab+");
-    
-    if (fwrite(wd, sizeof(WeatherData), 1, fptr_g) != 0) {
-        printf("Successfully written struct to file\n");
-    }   else {
-        printf("Failed writing struct to file!\n");
-    }
+  fclose(fptr_g);
 
-    rewind(fptr_g);
-
-    WeatherData wd2;
-
-    fread(&wd2, sizeof(wd2), 1, fptr_g);
-
-    printf("%lf", wd2.latitude);
-
-    fclose(fptr_g);
-    return 0;
+  return 0; 
 }
+
+
+void read_file() {
+  fptr_g = fopen("data.txt", "a+");
+
+  char test[2056];
+  fgets(test, sizeof(test), fptr_g);
+
+  printf("Data from read_file %s", test);
+  
+}
+
+

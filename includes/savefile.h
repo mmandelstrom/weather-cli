@@ -14,6 +14,7 @@ typedef struct {
 
 } WeatherData;
 
+void read_file();
 int get_weather_data(HTTP* _Http);
 
 #endif
