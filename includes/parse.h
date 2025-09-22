@@ -11,6 +11,8 @@ typedef struct {
 } Meteo_data;
 int parse_json_data(HTTP* h);
 int parse_add_to_file(cJSON* root);
+int parse_read_and_print(const char* _Filepath);
+void check_time_test();
 
 #endif
 
