@@ -32,24 +32,45 @@ int cities_parse_list(Cities* _Cities, const char* list);
 
 
 int cities_init(Cities* _Cities) {
-  //TODO Börja med att rensa citites.
 
   memset(_Cities, 0, sizeof(*_Cities));
 
   if (cities_parse_list(_Cities, cities_list) != 0) {
     return -1;
   }
-  cities_print(_Cities);
   
-  City* user_city;
-   
-  if (cities_get(_Cities, "Stockholm", &user_city) != 0) {
-    printf("Failure");
+  
+  char* user_input = NULL;
+
+  while (1) {
+    cities_print(_Cities);
+
+    if (get_user_input(&user_input) != 0) {
+      free(user_input);
+      printf("Please try again\n");
+      continue;
+      }
+
+    City* user_city = NULL;
+
+    if (cities_get(_Cities, user_input, &user_city) != 0) {
+      printf("Failed to get city\n");
+      free(user_input);
+      return -1;
+    }
+
+    free(user_input);
+    user_input = NULL;
+
+    printf("user_city: %s\n", user_city->name);
+
+    meteo_get_city_data(user_city);
+
+    if (break_loop() != 0) {
+      break;
+    }
   }
-  
-  meteo_get_city_data(user_city);
-
-
+ 
   return 0;
 }
 
@@ -125,12 +146,15 @@ int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
   new_city->name = _Name;
   new_city->latitude = _Latitude;
   new_city->longitude = _Longitude;
+  new_city->next = NULL;
+  new_city->prev = NULL;
   
   //If there is no tail the list is empty
   if (_Cities->tail == NULL) {
     _Cities->head = new_city;
     _Cities->tail = new_city;
   } else {
+    new_city->prev = _Cities->tail;
     _Cities->tail->next = new_city;
     _Cities->tail = new_city;
   }

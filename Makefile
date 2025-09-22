@@ -12,24 +12,31 @@ BUILD_DIR := build
 
 # Flaggor: standard, varningar, optimering + auto-dep för headers 
 # Detta är en enkel variabel definition
-CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes
+CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Iexternal/cjson
 
+PROFILE ?= default
+
+ifeq ($(PROFILE),debug)
+  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Iexternal/cjson -O0 -g
+endif
 # Länkarflaggor
 # Detta är en enkel variabel definition
 LDFLAGS := -flto -Wl,--gc-sections
 
 # Bibliotek att länka mot
 # Detta är en enkel variabel definition
-LIBS := -lcurl -ljansson
+LIBS := -lcurl external/cjson/libcjson.a
 
 # Hittar alla .c filer rekursivt i katalogen.
 #Den anropar 'find' kommandot i Linux och formaterar resultatet som en lista på sökvägar med mellanslag mellan varje
 SRC := $(shell find -L $(SRC_DIR) -type f -name '*.c')
+SRC := $(strip $(SRC))
 
 # Mappa varje .c till motsvarande .o i BUILD_DIR
 # Häre anropar den inbyggda 'patsubst' funktionen i Make för att ersätta prefix och suffix
 # Alltså, den tar varje filväg i SRC som matchar mönstret $(SRC_DIR)/%.c och ersätter det med $(BUILD_DIR)/%.o
-OBJ := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC))
+
+OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
 
 # Tillhörande .d-filer (dependency-filer skapade av -MMD)
 # Här härleder vi .d-filerna direkt från OBJ genom att bara byta filändelsen från .o till .d
@@ -56,7 +63,7 @@ all: $(BIN)
 # Efter OBJ är en lista på alla .o filer som ska byggas så tar den varje sökväg och letar efter ett mål som matchar
 # mönstret "$(BUILD_DIR)/%.o" (se nedan) och kör det för varje fil i listan.
 # Alltså raden "$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c" nedan körs för alla inaktuella filer först. (Han jämför tidsstämplar mellan .c och .o i filsystemet)
-$(BIN): $(OBJ)
+$(BIN): $(OBJ) external/cjson/libcjson.a
 	@$(CC) $(LDFLAGS) $(OBJ) -o $@ $(LIBS)
 
 # Mönsterregel: bygger en .o från motsvarande .c
@@ -67,7 +74,7 @@ $(BIN): $(OBJ)
 #   $(BUILD_DIR)/subfolder/test.o: $(SRC_DIR)/subfolder/test.c
 #   $(BUILD_DIR)/main.o: $(SRC_DIR)/main.c
 # 	osv...
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: %.c
 	@echo "Compiling $<..."
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -92,5 +99,13 @@ print:
 # Inkludera header-beroenden (prefix '-' = ignorera om de inte finns ännu)
 -include $(DEP)
 
+valgrind: $(BIN)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./$(BIN)
+
+#Om libcjson ändras byggs den också om
+external/cjson/libcjson.a: external/cjson/cJSON.c
+	$(CC) -c $(CFLAGS) $< -o external/cjson/cJSON.o
+	ar rcs $@ external/cjson/cJSON.o
+
 # Dessa mål är inte riktiga filer; kör alltid när de anropas
-.PHONY: all run clean
+.PHONY: all run clean valgrind
