@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-static inline char* my_strdup(const char* str) {
+static char* my_strdup(const char* str) {
   if (!str) return NULL;
   size_t len = strlen(str) + 1;
   char* copy = (char*)malloc(len);
