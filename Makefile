@@ -12,12 +12,12 @@ BUILD_DIR := build
 
 # Flaggor: standard, varningar, optimering + auto-dep för headers 
 # Detta är en enkel variabel definition
-CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Iexternal/cjson
+CFLAGS := -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Isrc/libs/cjson
 
 PROFILE ?= default
 
 ifeq ($(PROFILE),debug)
-  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Iexternal/cjson -O0 -g
+  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Isrc/libs/cjson -O0 -g
 endif
 # Länkarflaggor
 # Detta är en enkel variabel definition
@@ -25,7 +25,7 @@ LDFLAGS := -flto -Wl,--gc-sections
 
 # Bibliotek att länka mot
 # Detta är en enkel variabel definition
-LIBS := -lcurl external/cjson/libcjson.a
+LIBS := -lcurl
 
 # Hittar alla .c filer rekursivt i katalogen.
 #Den anropar 'find' kommandot i Linux och formaterar resultatet som en lista på sökvägar med mellanslag mellan varje
@@ -63,7 +63,7 @@ all: $(BIN)
 # Efter OBJ är en lista på alla .o filer som ska byggas så tar den varje sökväg och letar efter ett mål som matchar
 # mönstret "$(BUILD_DIR)/%.o" (se nedan) och kör det för varje fil i listan.
 # Alltså raden "$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c" nedan körs för alla inaktuella filer först. (Han jämför tidsstämplar mellan .c och .o i filsystemet)
-$(BIN): $(OBJ) external/cjson/libcjson.a
+$(BIN): $(OBJ) 
 	@$(CC) $(LDFLAGS) $(OBJ) -o $@ $(LIBS)
 
 # Mönsterregel: bygger en .o från motsvarande .c
@@ -101,11 +101,6 @@ print:
 
 valgrind: $(BIN)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./$(BIN)
-
-#Om libcjson ändras byggs den också om
-external/cjson/libcjson.a: external/cjson/cJSON.c
-	$(CC) -c $(CFLAGS) $< -o external/cjson/cJSON.o
-	ar rcs $@ external/cjson/cJSON.o
 
 # Dessa mål är inte riktiga filer; kör alltid när de anropas
 .PHONY: all run clean valgrind

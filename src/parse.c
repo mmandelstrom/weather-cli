@@ -1,6 +1,6 @@
 #include "../includes/parse.h"
 #include "../includes/http.h"
-#include "../external/cjson/cJSON.h"
+#include "../src/libs/cJSON/cJSON.h"
 #include <stdio.h>
 #include <time.h>
 
