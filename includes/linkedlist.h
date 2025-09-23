@@ -8,8 +8,8 @@ extern const char* cities_list;
 typedef struct LinkedList LinkedList;
 
 typedef struct LinkedList{
-	void* head;
-	void* tail;
+	City* head;
+	City* tail;
 } LinkedList;
 
 

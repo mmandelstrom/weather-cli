@@ -1,7 +1,7 @@
 #ifndef __CITY_H__
 #define __CITY_H__
-#include "linkedlist.h"
-/*
+#include "../includes/linkedlist.h"
+
 typedef struct City City;
 
 typedef struct City {
@@ -12,7 +12,5 @@ typedef struct City {
 	float longitude;
 } City;
 
-void cities_remove(LinkedList* _Cities, City* _City);
-*/
 #endif
 

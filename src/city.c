@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "../includes/utils.h"
 #include "../includes/meteo.h"
+#include "../includes/city.h"
+
 /*-------------Internal function definitions----------------*/
 
 const char* cities_list = "Stockholm:59.3293:18.0686\n"

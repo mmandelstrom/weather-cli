@@ -25,10 +25,10 @@ bool cities_init(LinkedList* _LinkedList) {
 }
 
 void ll_print(LinkedList* _LinkedList) {
-  if (_LinkedList*, ->head == NULL) {
+  if (_LinkedList->head == NULL) {
     printf("List is empty, no cities to print\n");
   } else {
-    City* current = _LinkedList*, ->head;
+    City* current = _LinkedList->head;
 
     do {
       printf("- %s\n", current->name);
@@ -36,6 +36,7 @@ void ll_print(LinkedList* _LinkedList) {
     } while (current != NULL);
   }
 }
+
 int cities_add(LinkedList* _Cities, char* _Name, float _Latitude, float _Longitude, City** _City) {
   City* new_city = (City*)malloc(sizeof(City));
   if (new_city == NULL) {
@@ -48,6 +49,7 @@ int cities_add(LinkedList* _Cities, char* _Name, float _Latitude, float _Longitu
   new_city->longitude = _Longitude;
   new_city->next = NULL;
   new_city->prev = NULL;
+  
   
   if (_Cities->tail == NULL) {
     _Cities->head = new_city;
@@ -71,13 +73,13 @@ int cities_add(LinkedList* _Cities, char* _Name, float _Latitude, float _Longitu
 void cities_remove(LinkedList* _LinkedList, City* _City) {
   
 	if (_City->next == NULL && _City->prev == NULL) {
-		_LinkedList*, ->tail = NULL;
-        _LinkedList*, ->head = NULL;
-    } else if (_City == _LinkedList*, ->tail) {
-		_LinkedList*, ->tail = _City->prev;
+		_LinkedList->tail = NULL;
+        _LinkedList->head = NULL;
+    } else if (_City == _LinkedList->tail) {
+		_LinkedList->tail = _City->prev;
         _City->prev->next = NULL;
-    } else if (_City == _LinkedList*, ->head){
-		_LinkedList*, ->head = _City->next;
+    } else if (_City == _LinkedList->head){
+		_LinkedList->head = _City->next;
         _City->next->prev = NULL;
     } else {
         _City->next->prev = _City->prev;
@@ -89,8 +91,8 @@ void cities_remove(LinkedList* _LinkedList, City* _City) {
   return;
 }
 
-int cities_get(LinkedList*, * _LinkedList, char* _Name, City** _CityPtr) {
-  City* current = _LinkedList*, ->head;
+int cities_get(LinkedList* _LinkedList, char* _Name, City** _CityPtr) {
+  City* current = _LinkedList->head;
 
   while(current != NULL) {
     if (current->name && strcmp(current->name, _Name) == 0) {
@@ -104,4 +106,4 @@ int cities_get(LinkedList*, * _LinkedList, char* _Name, City** _CityPtr) {
   }
    return -1;
 }
-void cities_dispose(LinkedList*, * c);
+

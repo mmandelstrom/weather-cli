@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include "../includes/networkhandler.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 
 /*LinkedList cities_g;*/
@@ -13,7 +14,7 @@ int main(){
   }
 */
 
-  char* url;
+  char url[100];
   sprintf(url,
           "https://api.open-meteo.com/v1/"
           "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",

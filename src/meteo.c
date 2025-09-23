@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "../includes/http.h"
 #include "../includes/meteo.h"
 
 int meteo_get_city_data(double _Latitude, double _Longitude) {
@@ -11,4 +10,3 @@ int meteo_get_city_data(double _Latitude, double _Longitude) {
 
   return 0;
 }
-

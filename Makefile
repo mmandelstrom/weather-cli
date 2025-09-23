@@ -12,16 +12,16 @@ BUILD_DIR := build
 
 # Flaggor: standard, varningar, optimering + auto-dep för headers 
 # Detta är en enkel variabel definition
-CFLAGS := -std=c90 -Wall -Wextra -MMD -MP -Iincludes -Isrc/libs/cjson
+CFLAGS := -std=c90 -Wall -Wextra -MMD -MP -g -Iincludes -Isrc/libs/cjson -I/usr/include/openssl
 
 PROFILE ?= default
 
 ifeq ($(PROFILE),debug)
-  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Isrc/libs/cjson -O0 -g
+  CFLAGS = -std=c99 -Wall -Wextra -MMD -MP -Iincludes -Isrc/libs/cjson -O0 -g -I/usr/include/openssl
 endif
 # Länkarflaggor
 # Detta är en enkel variabel definition
-LDFLAGS := -flto -Wl,--gc-sections
+LDFLAGS := -flto -Wl,--gc-sections -lssl -lcrypto
 
 # Bibliotek att länka mot
 # Detta är en enkel variabel definition
@@ -64,7 +64,7 @@ all: $(BIN)
 # mönstret "$(BUILD_DIR)/%.o" (se nedan) och kör det för varje fil i listan.
 # Alltså raden "$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c" nedan körs för alla inaktuella filer först. (Han jämför tidsstämplar mellan .c och .o i filsystemet)
 $(BIN): $(OBJ) 
-	@$(CC) $(LDFLAGS) $(OBJ) -o $@ $(LIBS)
+	@$(CC) $(OBJ) -o $@ $(LDFLAGS) $(LIBS)
 
 # Mönsterregel: bygger en .o från motsvarande .c
 # Samma här, detta är en funktion som anropas inifrån (av '$(BIN)' målet)
