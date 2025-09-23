@@ -38,7 +38,13 @@ int parse_json_data(HTTP* _H, WeatherData** _WeatherData){
         cJSON* wind_direction = cJSON_GetObjectItemCaseSensitive(current_weather, "wind_direction");
         cJSON* is_day = cJSON_GetObjectItemCaseSensitive(current_weather, "is_day");
 
-        if (!cJSON_IsNumber(lat) || !cJSON_IsNumber(lon) || !cJSON_IsNumber(temperature) || !cJSON_IsString(time) || !cJSON_IsNumber(wind_speed) || !cJSON_IsNumber(wind_direction) || !cJSON_IsNumber(is_day)){
+        if (!cJSON_IsNumber(lat) ||
+            !cJSON_IsNumber(lon) ||
+            !cJSON_IsNumber(temperature) ||
+            !cJSON_IsString(time) ||
+            !cJSON_IsNumber(wind_speed) ||
+            !cJSON_IsNumber(wind_direction) ||
+            !cJSON_IsNumber(is_day)) {
             printf("Error: Missing or invalid data in JSON response\n");
             cJSON_Delete(root);
             free(weatherptr);
@@ -57,12 +63,9 @@ int parse_json_data(HTTP* _H, WeatherData** _WeatherData){
         if (_WeatherData != NULL){
             *(_WeatherData) = weatherptr;
 
-            
         }
-        
-
-}
-return 0;
+  }
+  return 0;
 }
 
 

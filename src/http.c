@@ -29,7 +29,6 @@ int meteo_get_city_data(City *_City) {
     return -1;
   }
 
-
   curl_easy_cleanup(handle);
 
   if (get_weather_data(&h) != 0) {

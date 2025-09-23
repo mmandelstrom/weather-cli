@@ -1,11 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../includes/parsedata.h"
 #include "../includes/http.h"
 #include "../includes/savefile.h"
-#include "libs/cJSON/cJSON.h"
-
 
 FILE* fptr_g;
 
@@ -27,7 +22,7 @@ int get_weather_data(HTTP* _Http) {
 
 
 void read_file() {
-  fptr_g = fopen("data.txt", "a+");
+  fptr_g = fopen("data.txt", "r");
 
   char test[2056];
   fgets(test, sizeof(test), fptr_g);
