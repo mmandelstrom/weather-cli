@@ -7,7 +7,7 @@
 
 
 int http_api_request(char* _URL, NetworkHandler** _NhPtr) { /*Skapar curl objekt och gör curl request och skickar datan till vår pointer*/
-  NetworkHandler* nh = malloc(sizeof(NetworkHandler*));
+  NetworkHandler* nh = calloc(1, sizeof *nh);
 
   CURL *handle = curl_easy_init();
   curl_easy_setopt(handle, CURLOPT_URL, _URL);
@@ -22,7 +22,7 @@ int http_api_request(char* _URL, NetworkHandler** _NhPtr) { /*Skapar curl objekt
   }
 
   curl_easy_cleanup(handle);
-  
+  printf("nhsize in http: %ld\n", nh->size); 
   *(_NhPtr) = nh; /*Needs to be freed by caller*/
 
   return 0;
@@ -32,15 +32,19 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) { /*Spar
   size_t bytes = size * nmemb;
   printf("Chunk recieved: %zu bytes\n", bytes);
   NetworkHandler *nh = (NetworkHandler *)userp;
-  
-  char *newptr = realloc(nh->data, nh->size + bytes + 2);
+
+  size_t newsize = nh->size + bytes;
+
+  char *newptr = realloc(nh->data, newsize + 1);
   if (newptr == NULL) {
     printf("Unable to reallocate memory\n");
     return -1;
   }
   nh->data = newptr;
-  nh->size += sizeof(*newptr);
   memcpy(nh->data, buffer, bytes);
+
+  nh->size = newsize;
+  
 
   return bytes;
 }

@@ -1,26 +1,17 @@
 #include <stdbool.h>
-#include "../includes/networkhandler.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../includes/linkedlist.h"
 
-
-/*LinkedList cities_g;*/
+LinkedList cities_g;
 
 int main(){
-/*  bool runLoop = true; 
-  while (runLoop) {
+ bool runLoop = true; 
+ while (runLoop) {
   
   cities_init(&cities_g);
   }
-*/
 
-  char url[100];
-  sprintf(url,
-          "https://api.open-meteo.com/v1/"
-          "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
-          58.4109, 15.6216);
-
-  networkhandler_get_data(url);
-    
+   
   return 0;
 }

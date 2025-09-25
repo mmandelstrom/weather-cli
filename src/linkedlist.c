@@ -19,7 +19,7 @@ bool cities_init(LinkedList* _LinkedList) {
   
   ll_print(_LinkedList);
 
-  city_get_info();
+  city_get_info(_LinkedList);
   
   return 0;
 }
@@ -69,7 +69,6 @@ int cities_add(LinkedList* _Cities, char* _Name, float _Latitude, float _Longitu
 
 
 
-
 void cities_remove(LinkedList* _LinkedList, City* _City) {
   
 	if (_City->next == NULL && _City->prev == NULL) {
@@ -91,7 +90,7 @@ void cities_remove(LinkedList* _LinkedList, City* _City) {
   return;
 }
 
-int cities_get(LinkedList* _LinkedList, char* _Name, City** _CityPtr) {
+int ll_get(LinkedList* _LinkedList, char* _Name, City** _CityPtr) {
   City* current = _LinkedList->head;
 
   while(current != NULL) {

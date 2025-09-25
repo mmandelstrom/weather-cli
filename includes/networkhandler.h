@@ -1,6 +1,6 @@
 #ifndef __NETWORKHANDLER_H__
 #define __NETWORKHANDLER_H__
-
+#include "../includes/meteo.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -8,7 +8,7 @@ typedef struct {
   size_t size;
 } NetworkHandler;
 
-int networkhandler_get_data(char* _URL);
+int networkhandler_get_data(char* _URL, Meteo** _Meteo);
 
 #endif
 

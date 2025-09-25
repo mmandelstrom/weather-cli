@@ -1,8 +1,7 @@
 #ifndef __CITY_H__
 #define __CITY_H__
-#include "../includes/linkedlist.h"
+typedef struct LinkedList LinkedList;
 
-typedef struct City City;
 
 typedef struct City {
 	City* prev;
@@ -11,6 +10,8 @@ typedef struct City {
 	float latitude;
 	float longitude;
 } City;
+
+int city_get_info(LinkedList* _CityList);
 
 #endif
 

@@ -13,16 +13,16 @@ int cache_create_file(char* _Hash, char* _Data) {
 
 /*Läser från fil o skickar datan till vår NH pointer*/
 int cache_read_file(char* _Hash, NetworkHandler** _NhPtr) {
-    NetworkHandler* buffer = malloc(sizeof(NetworkHandler*));
-    buffer->data = (char*)malloc(sizeof(1024));
-    FILE* fptr_g;
-    fptr_g = fopen(_Hash, "r");
+  NetworkHandler* buffer = calloc(1, sizeof *buffer);
+  buffer->data = (char*)malloc(sizeof(1024));
+  FILE* fptr_g;
+  fptr_g = fopen(_Hash, "r");
 
-    fgets(buffer->data, 1024, fptr_g);
+  fgets(buffer->data, 1024, fptr_g);
 
-    *(_NhPtr) = buffer;
+  *(_NhPtr) = buffer;
 
-    return 0;
+  return 0;
 
 }   
 

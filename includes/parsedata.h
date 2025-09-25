@@ -1,4 +1,4 @@
-/*#ifndef __PARSEDATA_H__
+/*ifndef __PARSEDATA_H__
 #define __PARSEDATA_H__
 #include "../includes/http.h"
 #include "../includes/savefile.h"
@@ -7,7 +7,8 @@
 int parse_json_data(HTTP* _H, WeatherData** _WeatherData);
 void dispose_weather_data(WeatherData* _WeatherData);
 
-
+ cJSON* parsedata_get_number(cJSON* root, const char* name);
+  cJSON* parsedata_get_name(cJSON* root, const char* name); 
 
 
 

@@ -6,8 +6,14 @@
 #include "../includes/http.h"
 
 
-int networkhandler_get_data(char* _URL) {
+int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
   NetworkHandler* nh = {0}; /*Struct för att ta emot data från fil eller api*/
+  Meteo* mt = calloc(1, sizeof *mt);
+  if (mt == NULL) {
+    printf("Failed to allocate memory for Meteo struct\n");
+    return -1;
+  }
+
   char* filename = utils_hash_url(_URL);
 
   printf("Hashed: %s\n", filename);
@@ -22,6 +28,12 @@ int networkhandler_get_data(char* _URL) {
   if (http_api_request(_URL, &nh) == 0) {
     printf("yay\n");
   }
- /*MEMCPY nh->data till meteo stuct*/
+  printf("NH Size: %d\n", nh->size);
+  mt->data = (char*)malloc(nh->size + 1);
+
+  memcpy(mt->data, nh->data, nh->size);
+  printf("mt data: %s\n", mt->data);
+  *(_Meteo) = mt;
+
   return 0;
 }

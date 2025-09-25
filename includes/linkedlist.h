@@ -1,11 +1,9 @@
 #ifndef __LINKEDLIST_H__
 #define __LINKEDLIST_H__
 #include <stdbool.h>
-#include "../includes/city.h"
 
 extern const char* cities_list;
-
-typedef struct LinkedList LinkedList;
+typedef struct City City;
 
 typedef struct LinkedList{
 	City* head;
