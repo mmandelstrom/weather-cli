@@ -1,4 +1,4 @@
-#ifndef __PARSEDATA_H__
+/*#ifndef __PARSEDATA_H__
 #define __PARSEDATA_H__
 #include "../includes/http.h"
 #include "../includes/savefile.h"
@@ -14,3 +14,4 @@ void dispose_weather_data(WeatherData* _WeatherData);
 
 
 #endif 
+*/

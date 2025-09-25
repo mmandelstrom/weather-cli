@@ -20,7 +20,7 @@ int main(){
           "forecast?latitude=%.4f&longitude=%.4f&current_weather=true",
           58.4109, 15.6216);
 
-  network_read_cache(url);
+  networkhandler_get_data(url);
     
   return 0;
 }

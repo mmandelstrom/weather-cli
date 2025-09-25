@@ -3,14 +3,13 @@
 #include "libs/cJSON/cJSON.h"
 #include "../includes/parsedata.h"
 #include "../includes/http.h"
-#include "../includes/savefile.h"
 
 int parse_json_data(HTTP* _H, WeatherData** _WeatherData){
     if (_H->data == NULL) {
 
         return -1; 
     }
-
+    
     WeatherData* weatherptr = (WeatherData*) malloc(sizeof(WeatherData));
     if (weatherptr == NULL){
         printf("failed to allocate memory");
@@ -24,19 +23,50 @@ int parse_json_data(HTTP* _H, WeatherData** _WeatherData){
         const char* error_pointer = cJSON_GetErrorPtr();
         if (error_pointer != NULL){
             fprintf(stderr,"JSON error %s\n", error_pointer);
-
-        } 
+        }
         return -1;
 
+    cJSON* current_weather = cJSON_GetObjectItemCaseSensitive(root, "current_weather");
+
+                typedef struct {
+    double latitude;
+    double longitude;
+    double generationtime_ms;
+    int utc_offset_seconds;
+    char timezone[16];              // "GMT"
+    char timezone_abbreviation[8];  // "GMT"
+    double elevation;
+
+    // current_weather fält direkt i samma struct
+    char time[32];     // "2025-09-25T13:15"
+    int interval;      // 900
+    double temperature;
+    double windspeed;
+    int winddirection;
+    int is_day;
+    int weathercode;
+} WeatherData;
+
     
-        cJSON* lat = cJSON_GetObjectItemCaseSensitive(root, "latitude");
+        cJSON* parsedata_get_field(cJSON* root, char* _Name) {
+            cJSON* field = cJSON_GetObjectItemCaseSensitive(root, _Name);
+            return field;
+        }
+
+
+        cJSON* lat = parsedata_get_field(root, "latitude", );
         cJSON* lon = cJSON_GetObjectItemCaseSensitive(root, "longitude");
-        cJSON* current_weather = cJSON_GetObjectItemCaseSensitive(root, "current_weather");
+        cJSON* generation_time_ms = 
+        
         cJSON* temperature = cJSON_GetObjectItemCaseSensitive(current_weather, "temperature");
         cJSON* time = cJSON_GetObjectItemCaseSensitive(current_weather, "time");
         cJSON* wind_speed = cJSON_GetObjectItemCaseSensitive(current_weather, "wind_speed");
         cJSON* wind_direction = cJSON_GetObjectItemCaseSensitive(current_weather, "wind_direction");
         cJSON* is_day = cJSON_GetObjectItemCaseSensitive(current_weather, "is_day");
+
+
+
+
 
         if (!cJSON_IsNumber(lat) ||
             !cJSON_IsNumber(lon) ||
@@ -67,5 +97,4 @@ int parse_json_data(HTTP* _H, WeatherData** _WeatherData){
   }
   return 0;
 }
-
 

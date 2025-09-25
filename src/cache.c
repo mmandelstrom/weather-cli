@@ -1,6 +1,7 @@
 #include "../includes/cache.h"
+#include "../includes/networkhandler.h"
 #include <stdio.h>
-
+/*Skapar fil*/
 int cache_create_file(char* _Hash, char* _Data) {
     FILE* fptr_g;
     fptr_g = fopen(_Hash, "w");
@@ -10,16 +11,29 @@ int cache_create_file(char* _Hash, char* _Data) {
   return 0; 
 }
 
-
-int cache_read_file(char* _Hash) {
-    char stuff[150];
+/*Läser från fil o skickar datan till vår NH pointer*/
+int cache_read_file(char* _Hash, NetworkHandler** _NhPtr) {
+    NetworkHandler* buffer = malloc(sizeof(NetworkHandler*));
+    buffer->data = (char*)malloc(sizeof(1024));
     FILE* fptr_g;
     fptr_g = fopen(_Hash, "r");
 
-    fgets(&stuff, 150, fptr_g);
+    fgets(buffer->data, 1024, fptr_g);
 
-    printf("Read data: %s\n", stuff);
+    *(_NhPtr) = buffer;
 
     return 0;
 
 }   
+
+/*Kollar om filen existerar*/
+int cache_check_file(char* _Filename) {
+  FILE* fptr;
+  fptr = fopen(_Filename, "r");
+  if (fptr == NULL) { 
+    return 1; /*File does not exist*/
+  }
+
+  fclose(fptr);
+  return 0; /*File exists*/
+}

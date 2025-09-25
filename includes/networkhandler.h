@@ -1,12 +1,14 @@
 #ifndef __NETWORKHANDLER_H__
 #define __NETWORKHANDLER_H__
 
+#include <stdlib.h>
 
-char* network_hash_url(char* _URL);
+typedef struct {
+  char *data;
+  size_t size;
+} NetworkHandler;
 
-int network_read_cache(char* _URL);
-
-int network_write_cache(char* _URL, char* _Hash);
+int networkhandler_get_data(char* _URL);
 
 #endif
 
