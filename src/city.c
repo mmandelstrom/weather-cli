@@ -98,6 +98,7 @@ int city_get_info(LinkedList* _CityList) {
   meteo_get_city_data(user_city->latitude, user_city->longitude);
   
   free(user_city);
+  free(user_input);
   user_input = NULL;
 
 

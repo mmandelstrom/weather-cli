@@ -1,9 +1,12 @@
 #ifndef __METEO_H__
 #define __METEO_H__
+#include <stdlib.h>
+
 int meteo_get_city_data(double _Latitude, double _Longitude);
 
 typedef struct {
   char* data;
+  size_t size;
 } Meteo;
 
 typedef struct {

@@ -19,7 +19,9 @@ int meteo_get_city_data(double _Latitude, double _Longitude) {
   }
 
   printf("Data from meteo: %s\n", m->data);
-  
+
+  free(m);
+
   return 0;
 
 }
