@@ -68,9 +68,12 @@ static char* utils_hash_url(char* _URL){
 
 
 static int compare_time(char* _Filename, int _Interval){
+  char filepath[60];
+  sprintf(filepath, "cache/%s.JSON", _Filename);
+  printf("compare: %s\n", filepath);
 
 	struct stat file_info;
-    if (stat(_Filename, &file_info) == -1) {
+    if (stat(filepath, &file_info) == -1) {
         perror("stat");
         return -1;
     }
