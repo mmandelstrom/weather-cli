@@ -4,14 +4,13 @@
 #include <errno.h>
 
 /*Skapar fil*/
-int cache_create_file(char* _HashedName, char* _Data) {
-  if (_HashedName == NULL || _Data == NULL) {
+int cache_create_file(char* _HashedName, char* _Data, const char* _Path) {
+  if (_HashedName == NULL || _Data == NULL || _Path == NULL) {
     return -1;
   }  
 
   char filepath[50];
-  sprintf(filepath, "cache/%s.JSON", _HashedName);
-  
+  sprintf(filepath, "%s/%s.json", _Path, _HashedName);
   FILE* fptr;
   fptr = fopen(filepath, "w");
   if (fptr == NULL) {
@@ -27,20 +26,19 @@ int cache_create_file(char* _HashedName, char* _Data) {
 }
 
 /*Läser från fil o skickar datan till vår NH pointer*/
-int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr) {
-  if (_HashedName == NULL || _NhPtr == NULL) {
+int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Path) {
+  if (_HashedName == NULL || _NhPtr == NULL || _Path == NULL) {
     return -1;
   }
 
   *_NhPtr = NULL;
   FILE* fptr;
   char filepath[50];
-  sprintf(filepath, "cache/%s.JSON", _HashedName);
-
+  sprintf(filepath, "%s/%s.json",_Path, _HashedName);
+  
   fptr = fopen(filepath, "r");
   if (fptr == NULL) {
     perror("fopen");
-    fclose(fptr);
     return -1;
   }
 
@@ -98,13 +96,13 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr) {
 }   
 
 /*Kollar om filen existerar*/
-int cache_check_file(char* _HashedName) {
-  if (_HashedName == NULL) {
+int cache_check_file(char* _HashedName, const char* _Path) {
+  if (_HashedName == NULL || _Path == NULL) {
     return -1;
   }
 
   char filepath[50];
-  sprintf(filepath, "cache/%s.JSON", _HashedName);
+  sprintf(filepath, "%s/%s.json",_Path, _HashedName);
   
   FILE* fptr;
   fptr = fopen(filepath, "r");

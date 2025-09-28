@@ -87,9 +87,9 @@ int utils_create_folder(const char* _Path) {
 	return 0;
 }
 
-int utils_compare_time(char* _Filename, int _Interval){
+int utils_compare_time(char* _Filename, char* _Path, int _Interval){
   char filepath[60];
-  sprintf(filepath, "cache/%s.JSON", _Filename);
+  sprintf(filepath, "%s/%s.json",_Path, _Filename);
   printf("compare: %s\n", filepath);
 
 	struct stat file_info;

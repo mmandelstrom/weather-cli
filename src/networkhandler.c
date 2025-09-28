@@ -28,10 +28,10 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
   NetworkHandler* nh = {0}; /*Struct för att ta emot data från fil eller api*/
 
   if (filename &&
-  cache_check_file(filename) == 0 &&
-  utils_compare_time(filename, 900) == 0) {
+  cache_check_file(filename, WEATHER_DATA_CACHE) == 0 &&
+  utils_compare_time(filename, WEATHER_DATA_CACHE, 900) == 0) {
     printf("Reading from file: %s\n", filename);
-    if (cache_read_file(filename, &nh) != 0) {
+    if (cache_read_file(filename, &nh, WEATHER_DATA_CACHE) != 0) {
       fprintf(stderr, "Failed to read file: %s\n", filename);
       Networkhandler_cleanup(nh, filename, mt);
       return -1;
@@ -43,7 +43,7 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
       Networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
-    if (cache_create_file(filename, nh->data) != 0) {
+    if (cache_create_file(filename, nh->data, WEATHER_DATA_CACHE) != 0) {
       printf("Failed to create cache file\n");
     }
   }

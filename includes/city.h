@@ -11,8 +11,9 @@ typedef struct City {
 	float longitude;
 } City;
 
-int city_get_info(LinkedList* _CityList);
-int city_parse_list(LinkedList* _LinkedList, const char* list);
+int city_get_info(Cities* _CityList);
+int city_parse_list(Cities* _Cities, const char* list);
+int city_Init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr);
 
 #endif
 

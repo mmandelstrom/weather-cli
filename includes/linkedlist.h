@@ -1,20 +1,19 @@
 #ifndef __LINKEDLIST_H__
 #define __LINKEDLIST_H__
-#include <stdbool.h>
 
 extern const char* cities_list;
 typedef struct City City;
 
-typedef struct LinkedList{
+typedef struct Cities{
 	City* head;
 	City* tail;
-} LinkedList;
+} Cities;
 
 
-int ll_get(LinkedList* _Cities, char* _Name, City** _CityPtr);
-bool cities_init(LinkedList* _Cities);
-void ll_print(LinkedList* _LinkedList);
-int cities_add(LinkedList* _Cities, char* _Name, float _Latitude, float _Longitude, City** _City);
-void cities_dispose(LinkedList* _Cities);
+int cities_get(Cities* _Cities, char* _Name, City** _CityPtr);
+int cities_init(Cities* _Cities);
+void cities_print(Cities* _Cities);
+int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, City** _City);
+void cities_dispose(Cities* _Cities);
 
 #endif

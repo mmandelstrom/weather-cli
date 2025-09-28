@@ -4,13 +4,14 @@
 #include "../includes/linkedlist.h"
 #include "../includes/utils.h"
 
-LinkedList cities_g;
 
 int main(){
- bool runLoop = true; 
- while (runLoop) {
+  Cities cities;
+  printf("Welcome!\n");
+  printf("Please select a city from the list below to get a weather report\n");
+  while (1) {
 
-    cities_init(&cities_g);
+    cities_init(&cities);
 
     if (utils_break_loop() != 0) {
       break;

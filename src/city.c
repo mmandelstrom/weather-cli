@@ -1,82 +1,83 @@
-#include "../includes/linkedlist.h"
 #include <stdio.h>
+#include <string.h>
+#include "../includes/linkedlist.h"
 #include "../includes/utils.h"
 #include "../includes/meteo.h"
 #include "../includes/city.h"
+#include "../includes/cache.h"
+#include "../includes/parsedata.h"
 
 /*-------------Internal function definitions----------------*/
-
-const char* cities_list = "Stockholm:59.3293:18.0686\n"
-  "Göteborg:57.7089:11.9746\n"
-  "Malmö:55.6050:13.0038\n"
-  "Uppsala:59.8586:17.6389\n"
-  "Västerås:59.6099:16.5448\n"
-  "Örebro:59.2741:15.2066\n"
-  "Linköping:58.4109:15.6216\n"
-  "Helsingborg:56.0465:12.6945\n"
-  "Jönköping:57.7815:14.1562\n"
-  "Norrköping:58.5877:16.1924\n"
-  "Lund:55.7047:13.1910\n"
-  "Gävle:60.6749:17.1413\n"
-  "Sundsvall:62.3908:17.3069\n"
-  "Umeå:63.8258:20.2630\n"
-  "Luleå:65.5848:22.1567\n"
-  "Kiruna:67.8558:20.2253\n";
 
 
 /*--------------------------------------------------------*/
 
-int city_parse_list(LinkedList* _LinkedList, const char* list) {
-  char* list_copy = utils_strdup(list);
-  if (list_copy == NULL) {
-    printf("Failed to allocate memory for list\n");
-    return -1;
+
+int city_Init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr) {
+	if(_Name == NULL || _CityPtr == NULL) {
+   return -1; 
   }
 
-  char* ptr = list_copy;
-  char* name = NULL;
-  char* lat_str = NULL;
-  char* lon_str = NULL;
- 
-  	do {
-		if(name == NULL) {
-			name = ptr;
-		}
-		else if(lat_str == NULL) {
-			if(*(ptr) == ':') {
-				lat_str = ptr + 1;
-				*(ptr) = '\0';
-			}
-		}
-		else if(lon_str == NULL) {
-			if(*(ptr) == ':') {
-				lon_str = ptr + 1;
-				*(ptr) = '\0';
-			}
-		}
-		else {
-			if(*(ptr) == '\n') {
-				*(ptr) = '\0';
+	City* _City = (City*)malloc(sizeof(City));
+	if(_City == NULL) {
+		printf("Failed to allocate memory for new City\n");
+		return -1;
+	}
 
-				cities_add(_LinkedList, name, atof(lat_str), atof(lon_str), NULL);
+	memset(_City, 0, sizeof(City));
 
-				name = NULL;
-				lat_str = NULL;
-				lon_str = NULL;
-			}
-		}
+	_City->name = utils_strdup(_Name);
+	if(_City->name == NULL) {
+		printf("Failed to allocate memory for City name\n");
+		free(_City);
+		return -1;
+	}
 
-		ptr++;
-
-	} while (*(ptr) != '\0');
+  _City->latitude = _Latitude;
+  _City->longitude = _Longitude;
+  _City->next = NULL;
+  _City->prev = NULL;
 
 
+  char* json_str;
+  char* hashed_name;
+  char filepath[50];
+  sprintf(filepath, "%s%f%f", _Name, _Latitude, _Longitude);
+  hashed_name = utils_hash_url(filepath);
 
-    return 0;
+
+  cJSON* root = cJSON_CreateObject();
+  if (root == NULL) {
+    perror("cJSON_CreateObject");
+    return -1;
+  }
+  
+  cJSON_AddStringToObject(root, "name", _Name);
+  cJSON_AddNumberToObject(root, "latitude", _Latitude);
+  cJSON_AddNumberToObject(root, "longitude", _Longitude);
+
+  json_str = cJSON_PrintUnformatted(root);
+
+  if (cache_create_file(hashed_name, json_str, CITY_CACHE) != 0) {
+    return -1;
+  }
+  
+  *(_CityPtr) = _City;
+  free(hashed_name);
+  cJSON_Delete(root);
+  cJSON_free(json_str);
+	
+	return 0;
 }
 
 
-int city_get_info(LinkedList* _CityList) {
+
+
+
+
+
+
+int city_get_info(Cities* _CityList) {
     
   char* user_input = NULL;
   if (utils_get_user_input(&user_input) != 0) {
@@ -86,7 +87,7 @@ int city_get_info(LinkedList* _CityList) {
 
   City* user_city = NULL;
 
-  if (ll_get(_CityList, user_input, &user_city) != 0) {
+  if (cities_get(_CityList, user_input, &user_city) != 0) {
     printf("Failed to get city\n");
     free(user_input);
     return -1;
