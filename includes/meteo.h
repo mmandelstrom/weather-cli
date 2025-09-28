@@ -2,14 +2,13 @@
 #define __METEO_H__
 #include <stdlib.h>
 
-int meteo_get_city_data(double _Latitude, double _Longitude);
-
 typedef struct {
   char* data;
   size_t size;
 } Meteo;
 
 typedef struct {
+    char* name;
     double latitude;
     double longitude;
     double generationtime_ms;
@@ -25,5 +24,8 @@ typedef struct {
     int is_day;
     int weathercode;
 } MeteoWeatherData;
+
+void meteo_print_full_weatherdata(MeteoWeatherData* _MWD);
+int meteo_get_city_data(double _Latitude, double _Longitude, char* _CityName);
 
 #endif

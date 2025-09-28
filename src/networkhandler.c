@@ -29,7 +29,7 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
 
   if (filename &&
   cache_check_file(filename) == 0 &&
-  compare_time(filename, 900) == 0) {
+  utils_compare_time(filename, 900) == 0) {
     printf("Reading from file: %s\n", filename);
     if (cache_read_file(filename, &nh) != 0) {
       fprintf(stderr, "Failed to read file: %s\n", filename);

@@ -12,6 +12,7 @@ typedef struct City {
 } City;
 
 int city_get_info(LinkedList* _CityList);
+int city_parse_list(LinkedList* _LinkedList, const char* list);
 
 #endif
 

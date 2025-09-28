@@ -23,12 +23,11 @@ const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Luleå:65.5848:22.1567\n"
   "Kiruna:67.8558:20.2253\n";
 
-int city_parse_list(LinkedList* _LinkedList, const char* list);
 
 /*--------------------------------------------------------*/
 
 int city_parse_list(LinkedList* _LinkedList, const char* list) {
-  char* list_copy = my_strdup(list);
+  char* list_copy = utils_strdup(list);
   if (list_copy == NULL) {
     printf("Failed to allocate memory for list\n");
     return -1;
@@ -80,7 +79,7 @@ int city_parse_list(LinkedList* _LinkedList, const char* list) {
 int city_get_info(LinkedList* _CityList) {
     
   char* user_input = NULL;
-  if (get_user_input(&user_input) != 0) {
+  if (utils_get_user_input(&user_input) != 0) {
     free(user_input);
     printf("Please try again\n");
     }
@@ -95,11 +94,11 @@ int city_get_info(LinkedList* _CityList) {
 
   printf("user_city: %s\n", user_city->name);
 
-  meteo_get_city_data(user_city->latitude, user_city->longitude);
+  meteo_get_city_data(user_city->latitude, user_city->longitude, user_city->name);
   
   free(user_city);
   free(user_input);
   user_input = NULL;
 
-
+  return 0;
 }

@@ -1,17 +1,23 @@
 #include <stdio.h>
 #include <strings.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../includes/utils.h"
 #include "../includes/linkedlist.h"
 #include "../includes/city.h"
 #include <stdbool.h>
-
+#DEFINE WEATHER_DATA_CACHE "cache"
+#DEFINE CITY_CACHE "cities" 
 
 
 
 bool cities_init(LinkedList* _LinkedList) {
 
-  memset(_LinkedList, 0, sizeof(*_LinkedList)); 
+  memset(_LinkedList, 0, sizeof(*_LinkedList));
+
+  utils_create_folder(WEATHER_DATA_CACHE);
+  utils_create_folder(CITY_CACHE);
 
   if (city_parse_list(_LinkedList, cities_list) != 0) {
     return -1;
