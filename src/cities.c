@@ -5,8 +5,11 @@
 #include "../includes/utils.h"
 #include "../includes/cities.h"
 #include "../includes/http.h"
+#include "../includes/parsedata.h"
+#include "../includes/savefile.h"
 
-//-------------Internal function definitions----------------
+
+/*-------------Internal function definitions----------------*/
 
 const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Göteborg:57.7089:11.9746\n"
@@ -27,7 +30,7 @@ const char* cities_list = "Stockholm:59.3293:18.0686\n"
 
 int cities_parse_list(Cities* _Cities, const char* list);
 
-//--------------------------------------------------------
+/*--------------------------------------------------------*/
 
 
 
@@ -149,7 +152,6 @@ int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
   new_city->next = NULL;
   new_city->prev = NULL;
   
-  //If there is no tail the list is empty
   if (_Cities->tail == NULL) {
     _Cities->head = new_city;
     _Cities->tail = new_city;

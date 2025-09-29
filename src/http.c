@@ -4,6 +4,9 @@
 #include <curl/curl.h>
 #include <stdio.h>
 #include <string.h>
+#include "../includes/parsedata.h"
+#include "../includes/savefile.h"
+
 
 int meteo_get_new_city(char *_Name);
 
@@ -31,9 +34,12 @@ int meteo_get_city_data(City *_City) {
 
   curl_easy_cleanup(handle);
  
-  if (parse_json_data(&h) != 0) {
+  if (parse_json_data_old(&h) != 0) {
     printf("Error in parse\n");
   } 
+  if (get_weather_data(&h) != 0) {
+    printf("Error in savefile\n");
+  }
 
   free(url);
   free(h.data);
