@@ -4,7 +4,7 @@
 #include <errno.h>
 
 /*Skapar fil*/
-int cache_create_file(char* _HashedName, char* _Data, const char* _Path) {
+int cache_write_file(char* _HashedName, char* _Data, const char* _Path) {
   if (_HashedName == NULL || _Data == NULL || _Path == NULL) {
     return -1;
   }  
@@ -42,33 +42,33 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Pat
     return -1;
   }
 
-  if (fseek(fptr, 0, SEEK_END) != 0) {
+  if (fseek(fptr, 0, SEEK_END) != 0) { /*Counts filesize in bytes*/
     perror("fseek");
     fclose(fptr);
     return -1;
   }
 
-  long size = ftell(fptr);
+  long size = ftell(fptr); /*Writes filesize to size variable*/
   if (size < 0) {
     perror("ftell");
     fclose(fptr);
     return -1;
   }
 
-  if (fseek(fptr, 0, SEEK_SET) != 0) {
+  if (fseek(fptr, 0, SEEK_SET) != 0) { /*Resets filepoint to start*/
     perror("fseek");
     fclose(fptr);
     return -1;
   }
 
-  NetworkHandler* nh = calloc(1, sizeof(*nh));
+  NetworkHandler* nh = calloc(1, sizeof(*nh)); /*Allocates initiliazed memory for nh struct*/
   if (nh == NULL) {
     perror("calloc");
     fclose(fptr);
     return -1;
   }
 
-  nh->data = (char*)malloc((size_t)size + 1);
+  nh->data = (char*)malloc((size_t)size + 1); /*Allocates size + 1 for data field*/
   if (nh->data == NULL) {
     perror("malloc");
     fclose(fptr);
@@ -76,7 +76,7 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Pat
     return -1;
   }
   
-  size_t bytes_read = fread(nh->data, 1, size, fptr);
+  size_t bytes_read = fread(nh->data, 1, size, fptr); /*Checks whole file was read*/
   if (bytes_read != (size_t)size) {
     perror("fread");
     fclose(fptr);
@@ -89,13 +89,13 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Pat
 
   fclose(fptr);
 
-  *(_NhPtr)= nh;
+  *(_NhPtr)= nh; /*Sets input ptr to new pointer, needs to be freed by caller*/
 
   return 0;
 
 }   
 
-/*Kollar om filen existerar*/
+/*Check if file exists*/
 int cache_check_file(char* _HashedName, const char* _Path) {
   if (_HashedName == NULL || _Path == NULL) {
     return -1;

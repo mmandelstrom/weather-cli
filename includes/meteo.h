@@ -26,7 +26,6 @@ typedef struct {
     int weathercode;
 } MeteoWeatherData;
 
-void meteo_print_full_weatherdata(MeteoWeatherData* _MWD);
 int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName);
 cJSON* meteo_get_city_data(char* _CityName);
 

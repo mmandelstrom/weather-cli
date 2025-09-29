@@ -17,34 +17,34 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
 
   *(_Meteo) = NULL;
 
-  char* filename = utils_hash_url(_URL);
-  Meteo* mt = calloc(1, sizeof *mt);
+  char* filename = utils_hash_url(_URL); /*create filename hash md5*/
+  Meteo* mt = calloc(1, sizeof *mt); /*Allocates nulled meory for Meteo struct*/
  
   if (mt == NULL) {
     fprintf(stderr, "Unable to allocate memory for Meteo\n");
     return -1;
   }
 
-  NetworkHandler* nh = {0}; /*Struct för att ta emot data från fil eller api*/
+  NetworkHandler* nh = {0}; /*Struct to hold data*/
 
-  if (filename &&
+  if (filename && /*Check if file exists and is not older than specified interval*/
   cache_check_file(filename, WEATHER_DATA_CACHE) == 0 &&
   utils_compare_time(filename, WEATHER_DATA_CACHE, 900) == 0) {
     printf("Reading from file: %s\n", filename);
-    if (cache_read_file(filename, &nh, WEATHER_DATA_CACHE) != 0) {
+    if (cache_read_file(filename, &nh, WEATHER_DATA_CACHE) != 0) { /*Read data from file to nh struct*/
       fprintf(stderr, "Failed to read file: %s\n", filename);
       Networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
-  } else {
-    printf("Making APIRequest\n");
-    if (http_api_request(_URL, &nh) != 0) {
+  } else { /*If file does not exist or too old, make api request*/
+    printf("Making APIRequest\n"); 
+    if (http_api_request(_URL, &nh) != 0) { /*Populate nh struct with data from api request*/
       fprintf(stderr, "Failed to make api request with url: %s\n", _URL);
       Networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
-    if (_Flag == 1) {
-      if (cache_create_file(filename, nh->data, WEATHER_DATA_CACHE) != 0) {
+    if (_Flag == 1) { /*Only create file if request is weather data*/
+      if (cache_write_file(filename, nh->data, WEATHER_DATA_CACHE) != 0) {
         printf("Failed to create cache file\n");
       }
     }
@@ -57,16 +57,16 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
     return -1;
   }
 
-  mt->data = (char*)malloc(nh->size + 1);
+  mt->data = (char*)malloc(nh->size + 1); /*Size + 1 for null termination*/
   if (mt->data == NULL) {
     fprintf(stderr, "Failed to allocate memory for Meteo data\n");
     Networkhandler_cleanup(nh, filename, mt);
     return -1;
   }
   
-  memcpy(mt->data, nh->data, nh->size);
+  memcpy(mt->data, nh->data, nh->size); /*Copy data to meteo struct*/
   mt->size = nh->size;
-  *(_Meteo) = mt;
+  *(_Meteo) = mt; /*Send data to meteo function, needs to free memory*/
 
   return 0;
 }

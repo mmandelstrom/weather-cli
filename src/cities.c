@@ -15,7 +15,7 @@
 /*--------Internal function definitions-------*/
 void cities_print(Cities* _cities);
 int cities_add_from_string(Cities* _Cities, const char* list);
-void Cities_AddFromFiles(Cities* _Cities);
+void cities_add_from_files(Cities* _Cities);
 
 const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Göteborg:57.7089:11.9746\n"
@@ -38,12 +38,12 @@ const char* cities_list = "Stockholm:59.3293:18.0686\n"
 /*--------------------------------------------*/
 int cities_init(Cities* _Cities) {
 
-  memset(_Cities, 0, sizeof(*_Cities));
+  memset(_Cities, 0, sizeof(*_Cities)); /*Resets _Cities and sets all values to 0*/
 
-  utils_create_folder(WEATHER_DATA_CACHE);
-  utils_create_folder(CITY_CACHE);
+  utils_create_folder(WEATHER_DATA_CACHE); /*Creates cache/ folder for weather data*/
+  utils_create_folder(CITY_CACHE); /*Creates cities/ folder for city data*/
   
-  Cities_AddFromFiles(_Cities);
+  cities_add_from_files(_Cities); /*Reads files in cities/ and populates _Cities list*/
 
   if (cities_add_from_string(_Cities, cities_list) != 0) {
     return -1;
@@ -194,10 +194,11 @@ int cities_get(Cities* _Cities, char* _Name, City** _CityPtr) {
    return -1;
 }
 
-void Cities_AddFromFiles(Cities* _Cities) {
+void cities_add_from_files(Cities* _Cities) {
   if (_Cities == NULL) {
       return;
   }
+
   NetworkHandler* nh = {0};
 
   tinydir_dir dir;
@@ -205,17 +206,18 @@ void Cities_AddFromFiles(Cities* _Cities) {
 
   while (dir.has_next) {
     tinydir_file file;
-    tinydir_readfile(&dir, &file);
+    tinydir_readfile(&dir, &file); /*Reads each file in cities*/
 
-    if (!file.is_dir) {
+    if (!file.is_dir) { /*If file is not a directory*/
       char filename[50];
-      strcpy(filename, file.name);
-      filename[strlen(filename) - 5] = '\0';
+      strcpy(filename, file.name); /*Contains .json*/
+      filename[strlen(filename) - 5] = '\0'; /*removes .json from filename*/
       char *dot = strrchr(filename, '.');
       if (dot && strcmp(dot, ".json") == 0) {
         *dot = '\0'; /*Remove .json*/
       }
 
+      
       if (cache_read_file(filename, &nh, CITY_CACHE) != 0) {
         return;
       }
@@ -228,7 +230,7 @@ void Cities_AddFromFiles(Cities* _Cities) {
         }
         return;
       }
-      
+
       char name[50];
       strcpy(name, parsedata_get_string(root, "name"));
       double lat = parsedata_get_double(root, "latitude");

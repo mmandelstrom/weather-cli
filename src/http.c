@@ -6,12 +6,12 @@
 
 
 
-int http_api_request(char* _URL, NetworkHandler** _NhPtr) { /*Skapar curl objekt och gör curl request och skickar datan till vår pointer*/
-  NetworkHandler* nh = calloc(1, sizeof *nh);
-
-  CURL *handle = curl_easy_init();
+int http_api_request(char* _URL, NetworkHandler** _NhPtr) {
+  NetworkHandler* nh = calloc(1, sizeof *nh); /*Creathe nh struct null initialized*/
+  /*Make api request with CURL*/
+  CURL *handle = curl_easy_init(); 
   curl_easy_setopt(handle, CURLOPT_URL, _URL);
-  curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_data);
+  curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_data); /*Callback function*/
   curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)nh);
   CURLcode result = curl_easy_perform(handle);
 
@@ -28,23 +28,24 @@ int http_api_request(char* _URL, NetworkHandler** _NhPtr) { /*Skapar curl objekt
   return 0;
 }
 
-size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) { /*Sparar datan från curl request i nh->data*/
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
+  /*Writes recieved data to struct*/
   size_t bytes = size * nmemb;
   printf("Chunk recieved: %zu bytes\n", bytes);
   NetworkHandler *nh = (NetworkHandler *)userp;
 
   size_t newsize = nh->size + bytes;
 
-  char *newptr = realloc(nh->data, newsize + 1);
+  char *newptr = realloc(nh->data, newsize + 1); /*Increase memory allocation*/
   if (newptr == NULL) {
     printf("Unable to reallocate memory\n");
     return -1;
   }
+  /*Copy data to nh struct*/
   nh->data = newptr;
-  memcpy(nh->data, buffer, bytes);
+  memcpy(nh->data, buffer, bytes); 
 
   nh->size = newsize;
   
-
   return bytes;
 }
