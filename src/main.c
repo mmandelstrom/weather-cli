@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../includes/linkedlist.h"
+#include "../includes/cities.h"
 #include "../includes/utils.h"
 
 
@@ -18,7 +18,5 @@ int main(){
     }
   }
 
-
-   
   return 0;
 }

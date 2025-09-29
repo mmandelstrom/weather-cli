@@ -7,6 +7,21 @@
 #include <stdio.h>
 #include <errno.h>
 
+int utils_continue() {
+  int c, d; 
+  c = getchar();              /* Read first char as response*/
+  if (c == '\r') c = getchar(); /* On some environments '\r' is added, if thats the case jump to next char */
+    /* Empty the rest of the line for future inputs */
+  while ((d = getchar()) != '\n' && d != EOF) { }
+
+    /*If input is n/N exit to main loop*/
+  if (c == 'n' || c == 'N') {
+    return -1;
+  }
+  return 0;
+}
+
+
 char* utils_strdup(const char* str) {
   if (!str) return NULL;
   size_t len = strlen(str) + 1;
@@ -90,7 +105,6 @@ int utils_create_folder(const char* _Path) {
 int utils_compare_time(char* _Filename, char* _Path, int _Interval){
   char filepath[60];
   sprintf(filepath, "%s/%s.json",_Path, _Filename);
-  printf("compare: %s\n", filepath);
 
 	struct stat file_info;
     if (stat(filepath, &file_info) == -1) {

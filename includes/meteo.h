@@ -1,6 +1,7 @@
 #ifndef __METEO_H__
 #define __METEO_H__
 #include <stdlib.h>
+#include "../includes/parsedata.h"
 
 typedef struct {
   char* data;
@@ -26,6 +27,7 @@ typedef struct {
 } MeteoWeatherData;
 
 void meteo_print_full_weatherdata(MeteoWeatherData* _MWD);
-int meteo_get_city_data(double _Latitude, double _Longitude, char* _CityName);
+int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName);
+cJSON* meteo_get_city_data(char* _CityName);
 
 #endif

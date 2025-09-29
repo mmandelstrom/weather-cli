@@ -2,13 +2,16 @@
 #define __NETWORKHANDLER_H__
 #include "../includes/meteo.h"
 #include <stdlib.h>
+#define FLAG_WRITE 1
+#define FLAG_NO_WRITE 0
+
 
 typedef struct {
   char *data;
   size_t size;
 } NetworkHandler;
 
-int networkhandler_get_data(char* _URL, Meteo** _Meteo);
+int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag);
 int networkhandler_destroy(NetworkHandler* _Nh);
 
 #endif

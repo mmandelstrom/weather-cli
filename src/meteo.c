@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "../includes/utils.h"
 #include "../includes/meteo.h"
 #include "../includes/parsedata.h"
 #include "../includes/networkhandler.h"
@@ -7,7 +8,7 @@
 
 void meteo_print_weatherdata(MeteoWeatherData* _MWD);
 
-int meteo_get_city_data(double _Latitude, double _Longitude, char* _CityName) {
+int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName) {
   char url[150];
   sprintf(url,
           "https://api.open-meteo.com/v1/"
@@ -16,7 +17,7 @@ int meteo_get_city_data(double _Latitude, double _Longitude, char* _CityName) {
   
   Meteo* m = NULL;
   
-  if (networkhandler_get_data(url, &m) != 0) {
+  if (networkhandler_get_data(url, &m, FLAG_WRITE) != 0) {
     printf("Failed to get city data\n");
     return -1;
   }
@@ -58,47 +59,68 @@ int meteo_get_city_data(double _Latitude, double _Longitude, char* _CityName) {
 
 }
 
+cJSON* meteo_get_city_data(char* _CityName) {
+  char url[150];
+  sprintf(url,
+          "https://geocoding-api.open-meteo.com/v1/search?name=%s&count=1",
+          _CityName);
+  
+  Meteo* m = NULL;
+  if (networkhandler_get_data(url, &m, FLAG_NO_WRITE) != 0) {
+    printf("Failed to get city data\n");
+    return NULL;
+  }
+
+  cJSON* root = cJSON_Parse(m->data);
+    if (root == NULL) {
+      const char* error_pointer = cJSON_GetErrorPtr();
+      if (error_pointer != NULL){
+          fprintf(stderr,"JSON error %s\n", error_pointer);
+      }
+        return NULL;
+    }
+
+  return root; /*Needs to be destroyed by caller*/
+
+}
+
 void meteo_print_weatherdata(MeteoWeatherData* _MWD) {
   printf("\n");
-  printf("+-----------------------------+\n");
-  printf("| %-27s |\n", _MWD->name);
-  printf("+-----------------------------+\n");
-  printf("| Temperature:%12.2f °C |\n", _MWD->temperature);
-  printf("| Elevation:  %12.2f m  |\n", _MWD->elevation);
-  printf("| Windspeed:  %12.2f m/s|\n", _MWD->windspeed);
-  printf("+-----------------------------+\n");  
+  printf("\t+-----------------------------+\n");
+  printf("\t %-27s \n", _MWD->name);
+  printf("\t+-----------------------------+\n");
+  printf("\t Temperature:%12.2f °C \n", _MWD->temperature);
+  printf("\t Elevation:  %12.2f m  \n", _MWD->elevation);
+  printf("\t Windspeed:  %12.2f m/s\n", _MWD->windspeed);
+  printf("\t+-----------------------------+\n");  
+  printf("\n");
 }
 
 void meteo_print_full_weatherdata(MeteoWeatherData* _MWD) {
   printf("Would you like to get the full weather report? Y/N: ");
-   int c, d; 
-  c = getchar();              /* Read first char as response*/
-  if (c == '\r') c = getchar(); /* On some environments '\r' is added, if thats the case jump to next char */
-    /* Empty the rest of the line for future inputs */
-  while ((d = getchar()) != '\n' && d != EOF) { }
 
-    /*If input is n/N exit to main loop*/
-  if (c == 'n' || c == 'N') {
+  if (utils_continue() != 0) {
     return;
   }
 
   printf("\n");
-  printf("+-------------------------------------------+\n");
-  printf("| %-41.41s |\n", _MWD->name);
-  printf("+-------------------------------------------+\n");
+  printf("\t+-------------------------------------------+\n");
+  printf("\t %-41.41s \n", _MWD->name);
+  printf("\t+-------------------------------------------+\n");
 
   /* label (vänsterjust 16) + mellanslag + värdeblock (högerjust 24) = 41 */
-  printf("| %-16s %24.4f |\n", "Latitude:", _MWD->latitude);
-  printf("| %-16s %24.4f |\n", "Longitude:", _MWD->longitude);
-  printf("| %-16s %24.24s |\n", "Timezone:", _MWD->timezone);        /* sträng, ev. trunkeras */
-  printf("| %-16s %22.2f m |\n", "Elevation:", _MWD->elevation);       /* 22 + ' m' = 24 */
-  printf("| %-16s %24.24s |\n", "Time:", _MWD->time);            /* sträng, ev. trunkeras */
-  printf("| %-16s %24d |\n",    "Interval:", _MWD->interval);
-  printf("| %-16s %21.2f °C |\n","Temperature:", _MWD->temperature);     /* 21 + ' °C' = 24 */
-  printf("| %-16s %20.2f m/s |\n","Windspeed:", _MWD->windspeed);       /* 20 + ' m/s' = 24 */
-  printf("| %-16s %22d ° |\n",  "Winddirection:", _MWD->winddirection);   /* 22 + ' °' = 24 */
-  printf("| %-16s %24d |\n",    "Weathercode:", _MWD->weathercode);
-  printf("+-------------------------------------------+\n");
+  printf("\t %-16s %24.4f \n", "Latitude:", _MWD->latitude);
+  printf("\t %-16s %24.4f \n", "Longitude:", _MWD->longitude);
+  printf("\t %-16s %24.24s \n", "Timezone:", _MWD->timezone);        /* sträng, ev. trunkeras */
+  printf("\t %-16s %22.2f m \n", "Elevation:", _MWD->elevation);       /* 22 + ' m' = 24 */
+  printf("\t %-16s %24.24s \n", "Time:", _MWD->time);            /* sträng, ev. trunkeras */
+  printf("\t %-16s %24d \n",    "Interval:", _MWD->interval);
+  printf("\t %-16s %21.2f °C \n","Temperature:", _MWD->temperature);     /* 21 + ' °C' = 24 */
+  printf("\t %-16s %20.2f m/s \n","Windspeed:", _MWD->windspeed);       /* 20 + ' m/s' = 24 */
+  printf("\t %-16s %22d ° \n",  "Winddirection:", _MWD->winddirection);   /* 22 + ' °' = 24 */
+  printf("\t %-16s %24d \n",    "Weathercode:", _MWD->weathercode);
+  printf("\t+-------------------------------------------+\n");
+  printf("\n");  
 }
   
 

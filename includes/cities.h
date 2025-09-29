@@ -1,5 +1,5 @@
-#ifndef __LINKEDLIST_H__
-#define __LINKEDLIST_H__
+#ifndef __CITIES_H_
+#define __CITIES_H_
 
 extern const char* cities_list;
 typedef struct City City;

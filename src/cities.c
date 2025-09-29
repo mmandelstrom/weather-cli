@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../includes/utils.h"
-#include "../includes/linkedlist.h"
+#include "../includes/cities.h"
 #include "../includes/city.h"
 #include "../includes/tinydir.h"
 #include "../includes/cache.h"
@@ -42,6 +42,7 @@ int cities_init(Cities* _Cities) {
 
   utils_create_folder(WEATHER_DATA_CACHE);
   utils_create_folder(CITY_CACHE);
+  
   Cities_AddFromFiles(_Cities);
 
   if (cities_add_from_string(_Cities, cities_list) != 0) {
@@ -133,7 +134,7 @@ int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
 	int result = 0;
 	City* new_city = NULL;
 	
-	result = city_Init(_Name, _Latitude, _Longitude, &new_city);
+	result = city_init(_Name, _Latitude, _Longitude, &new_city);
 
   if(result != 0) {
 		printf("Failed to initialize City struct! Errorcode: %i\n", result);
@@ -221,12 +222,13 @@ void Cities_AddFromFiles(Cities* _Cities) {
 
       cJSON* root = cJSON_Parse(nh->data); 
       if (root == NULL) {
-      const char* error_pointer = cJSON_GetErrorPtr();
-      if (error_pointer != NULL){
-        fprintf(stderr,"JSON error %s\n", error_pointer);
+        const char* error_pointer = cJSON_GetErrorPtr();
+        if (error_pointer != NULL){
+          fprintf(stderr,"JSON error %s\n", error_pointer);
         }
         return;
       }
+      
       char name[50];
       strcpy(name, parsedata_get_string(root, "name"));
       double lat = parsedata_get_double(root, "latitude");

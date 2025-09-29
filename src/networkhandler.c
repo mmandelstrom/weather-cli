@@ -10,7 +10,7 @@
 void Networkhandler_cleanup();
 
 /*---------------------------------------------------------------*/
-int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
+int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
   if (_Meteo == NULL) {
     return -1;
   }
@@ -43,9 +43,12 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo) {
       Networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
-    if (cache_create_file(filename, nh->data, WEATHER_DATA_CACHE) != 0) {
-      printf("Failed to create cache file\n");
+    if (_Flag == 1) {
+      if (cache_create_file(filename, nh->data, WEATHER_DATA_CACHE) != 0) {
+        printf("Failed to create cache file\n");
+      }
     }
+
   }
     
   if (nh->data == NULL || nh->size == 0) {

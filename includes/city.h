@@ -13,7 +13,8 @@ typedef struct City {
 
 int city_get_info(Cities* _CityList);
 int city_parse_list(Cities* _Cities, const char* list);
-int city_Init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr);
+int city_init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr);
+int city_add_from_api(char* _Name, Cities* _Cities);
 
 #endif
 
