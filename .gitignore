@@ -1,0 +1,28 @@
+# Byggkatalog och objektfiler
+/build/
+/*.o
+*.o
+*.d
+
+# Körbara filer (binärer)
+main
+
+# Cache-filer (genererade json från programmet)
+cache/
+cities/
+
+# Kompilatorgenererade filer (för säkerhets skull)
+*.out
+*.exe
+*.obj
+*.log
+
+# Backup/temp-filer
+*~
+*.swp
+*.swo
+
+# macOS/Unix skräp
+.DS_Store
+Thumbs.db
+
