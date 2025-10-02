@@ -7,7 +7,7 @@
 #include "../includes/http.h"
 
 /*------------------Internal function definitons------------------*/
-void Networkhandler_cleanup();
+void networkhandler_cleanup();
 
 /*---------------------------------------------------------------*/
 int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
@@ -33,14 +33,14 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
     printf("Reading from file: %s\n", filename);
     if (cache_read_file(filename, &nh, WEATHER_DATA_CACHE) != 0) { /*Read data from file to nh struct*/
       fprintf(stderr, "Failed to read file: %s\n", filename);
-      Networkhandler_cleanup(nh, filename, mt);
+      networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
   } else { /*If file does not exist or too old, make api request*/
     printf("Making APIRequest\n"); 
     if (http_api_request(_URL, &nh) != 0) { /*Populate nh struct with data from api request*/
       fprintf(stderr, "Failed to make api request with url: %s\n", _URL);
-      Networkhandler_cleanup(nh, filename, mt);
+      networkhandler_cleanup(nh, filename, mt);
       return -1;
     }
     if (_Flag == 1) { /*Only create file if request is weather data*/
@@ -53,41 +53,45 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
     
   if (nh->data == NULL || nh->size == 0) {
     fprintf(stderr, "Data is empty\n");
-    Networkhandler_cleanup(nh, filename, mt);
+    networkhandler_cleanup(nh, filename, mt);
     return -1;
   }
 
   mt->data = (char*)malloc(nh->size + 1); /*Size + 1 for null termination*/
   if (mt->data == NULL) {
     fprintf(stderr, "Failed to allocate memory for Meteo data\n");
-    Networkhandler_cleanup(nh, filename, mt);
+    networkhandler_cleanup(nh, filename, mt);
     return -1;
   }
   
   memcpy(mt->data, nh->data, nh->size); /*Copy data to meteo struct*/
   mt->size = nh->size;
+  mt->data[mt->size] = '\0';
   *(_Meteo) = mt; /*Send data to meteo function, needs to free memory*/
+
+  networkhandler_dispose(nh);
+  free(filename);
 
   return 0;
 }
 
-int networkhandler_destroy(NetworkHandler* _Nh){
+void networkhandler_dispose(NetworkHandler* _Nh){
   if (!_Nh) {
-    return -1;
+    return;
   }
 
   free(_Nh->data);
   _Nh->data = NULL;
   _Nh->size = 0;
+  free(_Nh);
 
-  return 0;
 }
 
-void Networkhandler_cleanup(NetworkHandler* _Nh, char* _Filename, Meteo* _Meteo) {
+void networkhandler_cleanup(NetworkHandler* _Nh, char* _Filename, Meteo* _Meteo) {
   if (_Meteo != NULL) {
     free(_Meteo->data);
     free(_Meteo);
   }
-  networkhandler_destroy(_Nh);
+  networkhandler_dispose(_Nh);
   free(_Filename);
 }

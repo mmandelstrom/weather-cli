@@ -46,6 +46,7 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   memcpy(nh->data, buffer, bytes); 
 
   nh->size = newsize;
+  nh->data[nh->size] = '\0';
   
   return bytes;
 }

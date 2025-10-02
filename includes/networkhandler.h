@@ -12,7 +12,7 @@ typedef struct {
 } NetworkHandler;
 
 int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag);
-int networkhandler_destroy(NetworkHandler* _Nh);
+void networkhandler_dispose();
 
 #endif
 

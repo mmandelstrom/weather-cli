@@ -16,6 +16,7 @@
 void cities_print(Cities* _cities);
 int cities_add_from_string(Cities* _Cities, const char* list);
 void cities_add_from_files(Cities* _Cities);
+void cities_dispose(Cities* _Cities);
 
 const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Göteborg:57.7089:11.9746\n"
@@ -100,7 +101,9 @@ int cities_add_from_string(Cities* _Cities, const char* list) {
 
 	} while (*(ptr) != '\0');
 
-
+    if (list_copy != NULL) {
+      free(list_copy);
+  }
 
     return 0;
 }
@@ -199,12 +202,12 @@ void cities_add_from_files(Cities* _Cities) {
       return;
   }
 
-  NetworkHandler* nh = {0};
 
   tinydir_dir dir;
   tinydir_open(&dir, CITY_CACHE);
 
   while (dir.has_next) {
+    NetworkHandler* nh = NULL;
     tinydir_file file;
     tinydir_readfile(&dir, &file); /*Reads each file in cities*/
 
@@ -214,11 +217,13 @@ void cities_add_from_files(Cities* _Cities) {
       filename[strlen(filename) - 5] = '\0'; /*removes .json from filename*/
       char *dot = strrchr(filename, '.');
       if (dot && strcmp(dot, ".json") == 0) {
-        *dot = '\0'; /*Remove .json*/
+        *dot = '\0'; 
       }
 
       
       if (cache_read_file(filename, &nh, CITY_CACHE) != 0) {
+        networkhandler_dispose(nh);
+        tinydir_close(&dir);
         return;
       }
 
@@ -228,14 +233,23 @@ void cities_add_from_files(Cities* _Cities) {
         if (error_pointer != NULL){
           fprintf(stderr,"JSON error %s\n", error_pointer);
         }
+
+        networkhandler_dispose(nh);
+        tinydir_close(&dir);
         return;
       }
+
+      networkhandler_dispose(nh);
 
       char name[50];
       strcpy(name, parsedata_get_string(root, "name"));
       double lat = parsedata_get_double(root, "latitude");
       double lon = parsedata_get_double(root, "longitude");
-      cities_add(_Cities, name, lat, lon, NULL);
+      if (cities_add(_Cities, name, lat, lon, NULL) != 0) {
+        cJSON_Delete(root);
+        tinydir_close(&dir);
+        return;
+      }
       
       cJSON_Delete(root);
     }
@@ -246,3 +260,20 @@ void cities_add_from_files(Cities* _Cities) {
   tinydir_close(&dir);
 }
 
+void cities_dispose(Cities* _Cities) {
+  if (_Cities == NULL) {
+    return;
+  }
+
+  City* current = _Cities->head;
+
+  while (current != NULL) {
+    City* next = current->next;
+    city_dispose(current);
+    current = next;
+  }
+  
+  _Cities->head = NULL;
+  _Cities->tail = NULL;
+
+}

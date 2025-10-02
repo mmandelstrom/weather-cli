@@ -36,7 +36,7 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Pat
   char filepath[50];
   sprintf(filepath, "%s/%s.json",_Path, _HashedName);
   
-  fptr = fopen(filepath, "r");
+  fptr = fopen(filepath, "rb");
   if (fptr == NULL) {
     perror("fopen");
     return -1;
@@ -86,13 +86,13 @@ int cache_read_file(char* _HashedName, NetworkHandler** _NhPtr, const char* _Pat
   }
 
   nh->size = (size_t)size;
+  nh->data[nh->size] = '\0';
 
   fclose(fptr);
 
   *(_NhPtr)= nh; /*Sets input ptr to new pointer, needs to be freed by caller*/
 
   return 0;
-
 }   
 
 /*Check if file exists*/

@@ -8,6 +8,8 @@
 /*-----------Internal function declarations-----------*/
 void meteo_print_weatherdata(MeteoWeatherData* _MWD);
 void meteo_print_full_weatherdata(MeteoWeatherData* _MWD);
+void meteo_dispose(Meteo* _Meteo);
+
 /*----------------------------------------------------*/
 int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName) {
   char url[150];
@@ -31,6 +33,8 @@ int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName)
       if (error_pointer != NULL){
           fprintf(stderr,"JSON error %s\n", error_pointer);
       }
+        free(m->data);
+        free(m);
         return -1;
     }
 
@@ -62,6 +66,8 @@ int meteo_get_weather_data(double _Latitude, double _Longitude, char* _CityName)
 
   meteo_print_weatherdata(&MWD); /*Prints basic weatherdata*/
   meteo_print_full_weatherdata(&MWD); /*Prints full weatherdata*/
+
+  cJSON_Delete(root);
   free(m->data);
   free(m);
 
@@ -87,9 +93,11 @@ cJSON* meteo_get_city_data(char* _CityName) {
       if (error_pointer != NULL){
           fprintf(stderr,"JSON error %s\n", error_pointer);
       }
+        meteo_dispose(m);
         return NULL;
     }
 
+  meteo_dispose(m);
   return root; /*Needs to be destroyed by caller*/
 
 }
@@ -131,5 +139,14 @@ void meteo_print_full_weatherdata(MeteoWeatherData* _MWD) {
   printf("\n");  
 }
   
+void meteo_dispose(Meteo* _Meteo) {
+  if (_Meteo == NULL) {
+    return;
+  }
+  free(_Meteo->data);
+  _Meteo->data = NULL;
+  _Meteo->size = 0;
 
+  free(_Meteo);
 
+}

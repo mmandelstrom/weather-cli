@@ -30,8 +30,8 @@ int city_init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr)
 	_City->name = utils_strdup(_Name);
 	if(_City->name == NULL) {
 		printf("Failed to allocate memory for City name\n");
-		free(_City);
-		return -1;
+		city_dispose(_City);
+    return -1;
 	}
   _City->latitude = _Latitude;
   _City->longitude = _Longitude;
@@ -49,6 +49,8 @@ int city_init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr)
   cJSON* root = cJSON_CreateObject(); /*Creates cJSON root object*/
   if (root == NULL) {
     perror("cJSON_CreateObject");
+    free(hashed_name);
+    city_dispose(_City);
     return -1;
   }
   
@@ -59,9 +61,19 @@ int city_init(char* _Name, double _Latitude, double _Longitude, City** _CityPtr)
 
   /*Creates json string from root object*/
   json_str = cJSON_PrintUnformatted(root);
+  if (json_str == NULL) {
+    cJSON_Delete(root);
+    free(hashed_name);
+    city_dispose(_City);
+    return -1;
+  }
 
   /*Creates and writes data to cache file in cities/ folder*/
   if (cache_write_file(hashed_name, json_str, CITY_CACHE) != 0) {
+    free(hashed_name);
+    cJSON_free(json_str);
+    cJSON_Delete(root);
+    city_dispose(_City);
     return -1;
   }
   
@@ -106,9 +118,11 @@ int city_get_info(Cities* _Cities) {
 
   meteo_get_weather_data(user_city->latitude, user_city->longitude, user_city->name); /*Request weather data*/
   
-  free(user_city);
+/*  free(user_city); */
   free(user_input);
   user_input = NULL;
+
+  cities_dispose(_Cities);
   
   return 0;
 }
@@ -156,5 +170,16 @@ int city_add_from_api(char* _CityName, Cities* _Cities) {
   cJSON_Delete(root); /*Free root*/
 
   return 0;
+
+}
+
+void city_dispose(City* _City) {
+  if (_City == NULL) {
+    return;
+  }
+
+  free(_City->name);
+  _City->name = NULL;
+  free(_City);
 
 }

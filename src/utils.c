@@ -31,7 +31,7 @@ char* utils_strdup(const char* str) {
   }
   memcpy(copy, str, len);   
   
-  return copy;
+  return copy; /*Caller needs to free*/
 }
 
 int utils_get_user_input(char** _InputPtr) {
