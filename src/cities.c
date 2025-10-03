@@ -52,7 +52,10 @@ int cities_init(Cities* _Cities) {
   
   cities_print(_Cities);
 
-  city_get_info(_Cities);
+  if (city_get_info(_Cities) != 0) {
+    cities_dispose(_Cities);
+    return -1;
+  }
   
   return 0;
 }
@@ -141,6 +144,7 @@ int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
 
   if(result != 0) {
 		printf("Failed to initialize City struct! Errorcode: %i\n", result);
+    city_dispose(new_city);
 		return -1;
 	}
     

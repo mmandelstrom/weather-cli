@@ -105,12 +105,14 @@ int city_get_info(Cities* _Cities) {
       return -1;
     } else {
       
-    if (city_add_from_api(user_input, _Cities) != 0) { /*Search for city in API*/
+    if (city_add_from_api(user_input, _Cities) != 0) {/*Search for city in API*/
+      free(user_input);
       return -1;
     }
     }
     
     if (cities_get(_Cities, user_input, &user_city) != 0) {
+      free(user_input);
       return -1;
     }
 
@@ -137,6 +139,7 @@ int city_add_from_api(char* _CityName, Cities* _Cities) {
   root = meteo_get_city_data(_CityName); /*Get city data from Meteo*/
   if (root == NULL) {
     printf("Failed to get city data from API\n");
+    cJSON_Delete(root);
     return -1;
   }
 
@@ -160,10 +163,12 @@ int city_add_from_api(char* _CityName, Cities* _Cities) {
   longitude = parsedata_get_double(item, "longitude");
   if (latitude == 0.0f && longitude == 0.0f) {
     printf("Received empty data\n");
+    cJSON_Delete(root);
     return -1;
   }
 
   if (cities_add(_Cities, name, latitude, longitude, NULL) != 0) { /*Adds city to Cities list*/
+    cJSON_Delete(root);
     return -1;
   }
 
