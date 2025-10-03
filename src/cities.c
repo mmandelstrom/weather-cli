@@ -47,6 +47,7 @@ int cities_init(Cities* _Cities) {
   cities_add_from_files(_Cities); /*Reads files in cities/ and populates _Cities list*/
 
   if (cities_add_from_string(_Cities, cities_list) != 0) {
+    cities_dispose(_Cities);
     return -1;
   }
   
@@ -116,11 +117,13 @@ void cities_print(Cities* _Cities) {
     printf("List is empty, no cities to print\n");
   } else {
     City* current = _Cities->head;
-
+    
+    printf("\n");
     do {
       printf("- %s\n", current->name);
       current = current->next;
     } while (current != NULL);
+    printf("\n");
   }
 }
 
@@ -205,7 +208,6 @@ void cities_add_from_files(Cities* _Cities) {
   if (_Cities == NULL) {
       return;
   }
-
 
   tinydir_dir dir;
   tinydir_open(&dir, CITY_CACHE);

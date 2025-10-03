@@ -98,7 +98,7 @@ int city_get_info(Cities* _Cities) {
   City* user_city = NULL;
 
   if (cities_get(_Cities, user_input, &user_city) != 0) { /*Check if City exists*/
-    printf("Failed to get city\n");
+    printf("City not found.\n");
     printf("\nWould you like to try to add it from API? Y/N: ");
     if (utils_continue() != 0) { /*Function to capture user input*/
       free(user_input);
@@ -162,7 +162,7 @@ int city_add_from_api(char* _CityName, Cities* _Cities) {
   latitude = parsedata_get_double(item, "latitude");
   longitude = parsedata_get_double(item, "longitude");
   if (latitude == 0.0f && longitude == 0.0f) {
-    printf("Received empty data\n");
+    printf("No city data available\n\n");
     cJSON_Delete(root);
     return -1;
   }

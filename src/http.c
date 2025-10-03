@@ -22,7 +22,6 @@ int http_api_request(char* _URL, NetworkHandler** _NhPtr) {
   }
 
   curl_easy_cleanup(handle);
-  printf("nhsize in http: %ld\n", nh->size); 
   *(_NhPtr) = nh; /*Needs to be freed by caller*/
 
   return 0;
@@ -31,7 +30,6 @@ int http_api_request(char* _URL, NetworkHandler** _NhPtr) {
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp) {
   /*Writes recieved data to struct*/
   size_t bytes = size * nmemb;
-  printf("Chunk recieved: %zu bytes\n", bytes);
   NetworkHandler *nh = (NetworkHandler *)userp;
 
   size_t newsize = nh->size + bytes;
