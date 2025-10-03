@@ -107,7 +107,6 @@ int cache_check_file(char* _HashedName, const char* _Path) {
   FILE* fptr;
   fptr = fopen(filepath, "r");
   if (fptr == NULL) {
-    perror("fopen");
     return 1; /*File does not exist*/
   }
 
