@@ -6,6 +6,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <errno.h>
+#include <ctype.h>
 
 int utils_continue() {
   int c, d; 
@@ -166,11 +167,51 @@ char* utils_hash_url(char* _URL){
   return md5_string; /* Needs to be freed by caller*/
 }
 
+int utils_strcasecmp(char* _StringOne, char* _StringTwo) {
+    while (*_StringOne && *_StringTwo) {
+        unsigned char ch1 = (unsigned char)*_StringOne++;
+        unsigned char ch2 = (unsigned char)*_StringTwo++;
+        if (tolower(ch1) != tolower(ch2)) {
+            return -1;
+        }
+    }
+    return *_StringOne - *_StringTwo;
+}
 
+void utils_replace_swedish_chars(char* _String) {
+  if (_String == NULL) {
+    return;
+  }
 
+  unsigned char* source = (unsigned char*)_String;
+  unsigned char* destination = (unsigned char*)_String;
 
+  while(*source) {
 
+    /*Check utf-8 sequences, first byte = source[0]*/
+    if(source[0] == 0xC3 && source[1] != '\0') { /* åäöÅÄÖ all start with C3 in utf-8 */
+      switch(source[1]) { /*check second byte*/
+        case 0xA5: /*å*/
+        case 0x85: /*Å*/
+        case 0xA4: /*ä*/
+        case 0x84: /*Ä*/
+          *(destination)++ = 'a';
+          (source) += 2; /*If found we jump 2 bytes to the next char*/
+          continue;
+        case 0xB6: /*ö*/
+        case 0x96: /*Ö*/
+          *(destination)++ = 'o';
+          (source) += 2; /*If found we jump 2 bytes to the next char*/
+          continue;
+      }
+    }
 
+    *(destination)++ = *(source)++; /*Copy current byte
+    multibyte chars will be copied over multiple iterations*/
+  }
 
+  *(destination) = '\0';
+
+}
 
 

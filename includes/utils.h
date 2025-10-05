@@ -11,6 +11,8 @@ char* utils_hash_url(char* _URL);
 int utils_compare_time(char* _Filename, char* _Path, int _Interval);
 int utils_create_folder(const char* _Path);
 int utils_continue();
+int utils_strcasecmp(char* _StringOne, char* _StringTwo);
+void utils_replace_swedish_chars(char* _String);
 
 #endif
 

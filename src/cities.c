@@ -192,8 +192,21 @@ void cities_remove(Cities* _Cities, City* _City) {
 int cities_get(Cities* _Cities, char* _Name, City** _CityPtr) {
   City* current = _Cities->head;
 
+  /*Create copy and replace swedish characters to enable case insensitive search*/
+  char name_copy[128];   strcpy(name_copy, _Name);
+  name_copy[sizeof(name_copy) - 1] = '\0';
+  utils_replace_swedish_chars(name_copy);
+
   while(current != NULL) {
-    if (current->name && strcmp(current->name, _Name) == 0) {
+
+    /*Create copy and replace swedish characters to enable case insensitive search*/
+    char city_name_copy[128];
+    strcpy(city_name_copy, current->name);
+    city_name_copy[sizeof(city_name_copy) - 1] = '\0';
+    utils_replace_swedish_chars(city_name_copy);
+
+
+    if (current->name && utils_strcasecmp(city_name_copy, name_copy) == 0) {
       if (_CityPtr != NULL) {
         *_CityPtr = current;
         return 0;

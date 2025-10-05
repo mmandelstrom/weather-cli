@@ -135,8 +135,14 @@ int city_add_from_api(char* _CityName, Cities* _Cities) {
     return -1;
   }
 
+   /*Create copy and replace swedish characters to enable case insensitive search*/
+    char name_copy[128];
+    strcpy(name_copy, _CityName);
+    name_copy[sizeof(name_copy) - 1] = '\0';
+    utils_replace_swedish_chars(name_copy);
+
   cJSON* root = NULL; /*Create cJSON root object*/
-  root = meteo_get_city_data(_CityName); /*Get city data from Meteo*/
+  root = meteo_get_city_data(name_copy); /*Get city data from Meteo*/
   if (root == NULL) {
     printf("Failed to get city data from API\n");
     cJSON_Delete(root);

@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 #include "../includes/cities.h"
 #include "../includes/utils.h"
 
