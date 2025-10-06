@@ -11,6 +11,9 @@ main
 cache/
 cities/
 
+#Valgrind filer
+vgcore.*
+
 # Kompilatorgenererade filer (för säkerhets skull)
 *.out
 *.exe
