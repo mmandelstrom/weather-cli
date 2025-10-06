@@ -1,7 +1,4 @@
 #include <stdio.h>
-#include <strings.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <string.h>
 #include "../includes/utils.h"
 #include "../includes/cities.h"
@@ -10,13 +7,13 @@
 #include "../includes/cache.h"
 #include "../includes/networkhandler.h"
 #include "../includes/parsedata.h"
-#include <stdbool.h>
 
 /*--------Internal function definitions-------*/
 void cities_print(Cities* _cities);
 int cities_add_from_string(Cities* _Cities, const char* list);
 void cities_add_from_files(Cities* _Cities);
 void cities_dispose(Cities* _Cities);
+/*------------------------------------------*/
 
 const char* cities_list = "Stockholm:59.3293:18.0686\n"
   "Göteborg:57.7089:11.9746\n"
@@ -67,7 +64,7 @@ int cities_add_from_string(Cities* _Cities, const char* list) {
     printf("Failed to allocate memory for list\n");
     return -1;
   }
-
+/*Break out each city with name, lat and lon from base string*/
   char* ptr = list_copy;
   char* name = NULL;
   char* lat_str = NULL;
@@ -126,7 +123,7 @@ void cities_print(Cities* _Cities) {
     printf("\n");
   }
 }
-
+/*Adds city to Linked list*/
 int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, City** _City) {
   if(_Cities == NULL || _Name == NULL) {
     return -1;
@@ -167,7 +164,7 @@ int cities_add(Cities* _Cities, char* _Name, float _Latitude, float _Longitude, 
   return 0;
 }
 
-
+/* Unused */
 void cities_remove(Cities* _Cities, City* _City) {
   
 	if (_City->next == NULL && _City->prev == NULL) {

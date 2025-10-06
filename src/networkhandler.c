@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "../includes/networkhandler.h"
 #include "../includes/cache.h"
 #include "../includes/utils.h"
@@ -37,7 +36,7 @@ int networkhandler_get_data(char* _URL, Meteo** _Meteo, int _Flag) {
       return -1;
     }
   } else { /*If file does not exist or too old, make api request*/
-    printf("Making APIRequest\n"); 
+    printf("Making APIRequest to: %s\n", _URL); 
     if (http_api_request(_URL, &nh) != 0) { /*Populate nh struct with data from api request*/
       fprintf(stderr, "Failed to make api request with url: %s\n", _URL);
       networkhandler_cleanup(nh, filename, mt);

@@ -84,6 +84,7 @@ cJSON* meteo_get_city_data(char* _CityName) {
   Meteo* m = NULL;
   if (networkhandler_get_data(url, &m, FLAG_NO_WRITE) != 0) { /*Get City data from networkhandler*/
     printf("Failed to get city data\n");
+    meteo_dispose(m);
     return NULL;
   }
 
