@@ -77,7 +77,7 @@ $(BIN): $(OBJ)
 $(BUILD_DIR)/%.o: %.c
 	@echo "Compiling $<..."
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Hjälpmål: kör programmet om det är byggt
 # Se det som en function anropas utifrån (make run)
