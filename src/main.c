@@ -15,6 +15,6 @@ int main(){
       break;
     }
   }
-/*comment*/
+
   return 0;
 }
